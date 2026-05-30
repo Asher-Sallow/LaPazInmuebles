@@ -144,7 +144,7 @@
         <div class="carousel-caption text-start"><span class="badge-hero d-inline-block mb-3">✦ INFORMACIÓN VERIFICADA</span><h2 class="fw-bold">Accede a datos exactos<br>de inmuebles en La Paz</h2><p class="d-none d-md-block opacity-75">Precio real, ubicación exacta y contacto directo del dueño.</p><a href="#propiedades" class="btn btn-gold rounded-pill px-4 mt-2">Solicitar Info <i class="bi bi-arrow-right ms-1"></i></a></div>
       </div>
       <div class="carousel-item" style="background-image:url('https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1400&q=80');">
-        <div class="carousel-caption text-start"><span class="badge-hero d-inline-block mb-3">✦ DATOS REALES, SIN INTERMEDIARIOS</span><h2 class="fw-bold">Evita visitas innecesarias.<br>Infórmate primero.</h2><p class="d-none d-md-block opacity-75">Solo 5 Bs por propiedad. Pago seguro y entrega inmediata.</p><a href="#propiedades" class="btn btn-gold rounded-pill px-4 mt-2">Solicitar Info <i class="bi bi-arrow-right ms-1"></i></a></div>
+        <div class="carousel-caption text-start"><span class="badge-hero d-inline-block mb-3">✦ DATOS REALES, SIN INTERMEDIARIOS</span><h2 class="fw-bold">Evita visitas innecesarias.<br>Infórmate primero.</h2><p class="d-none d-md-block opacity-75">Solo 10 Bs por propiedad. Pago seguro y entrega inmediata.</p><a href="#propiedades" class="btn btn-gold rounded-pill px-4 mt-2">Solicitar Info <i class="bi bi-arrow-right ms-1"></i></a></div>
       </div>
       <div class="carousel-item" style="background-image:url('https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=1400&q=80');">
         <div class="carousel-caption text-start"><span class="badge-hero d-inline-block mb-3">✦ COMPRA SEGURA</span><h2 class="fw-bold">Pagas la info, la<br>recibes al instante</h2><p class="d-none d-md-block opacity-75">Validamos cada dato antes de enviártelo.</p><a href="#propiedades" class="btn btn-gold rounded-pill px-4 mt-2">Ver Catálogo <i class="bi bi-arrow-right ms-1"></i></a></div>
@@ -166,7 +166,7 @@
   <!-- CATÁLOGO -->
   <section id="propiedades" class="py-5">
     <div class="container">
-      <div class="text-center mb-4" data-aos="fade-up"><h2 class="section-title">Inmuebles Disponibles</h2><p class="text-muted mt-2">Selecciona los que te interesen. <strong>5 Bs por propiedad</strong>. Recibe precio, ubicación exacta y contacto directo.</p></div>
+      <div class="text-center mb-4" data-aos="fade-up"><h2 class="section-title">Inmuebles Disponibles</h2><p class="text-muted mt-2">Selecciona los que te interesen. <strong>10 Bs por propiedad</strong>. Recibe precio, ubicación exacta y contacto directo.</p></div>
       <div class="text-center mb-4">
         <div class="filter-bar">
           <button class="btn active" data-filter="all">Todos</button>
@@ -364,90 +364,20 @@
         </div>
         <div id="amt-pago" class="p-4 d-none">
           <p class="text-muted small">El cliente paga vía QR. Verifica el monto recibido antes de entregar.</p>
-          
           <div class="row g-3 mb-3">
-            <div class="col-md-6">
-              <label class="form-label small fw-semibold">Monto total solicitado (Bs)</label>
-              <input type="text" class="form-control" id="m-monto" readonly placeholder="Calculado automáticamente">
-            </div>
-            <div class="col-md-6">
-              <label class="form-label small fw-semibold">QR de pago</label>
-              <div class="text-center">
-                <img id="qr-preview-img" class="qr-img d-none">
-              </div>
+            <div class="col-md-6"><label class="form-label small fw-semibold">Monto total (Bs)</label><input type="text" class="form-control" id="m-monto" readonly placeholder="Calculado automáticamente"></div>
+            <div class="col-md-6"><label class="form-label small fw-semibold">QR de pago</label>
+              <div class="text-center"><img id="qr-preview-img" class="qr-img d-none"></div>
               <input type="file" id="m-qr-inp" accept="image/*" class="d-none" onchange="previewQR(this)">
-              <button class="btn btn-sm btn-outline-secondary w-100 mt-2" onclick="document.getElementById('m-qr-inp').click()">
-                <i class="bi bi-upload me-1"></i>Subir QR
-              </button>
+              <button class="btn btn-sm btn-outline-secondary w-100 mt-2" onclick="document.getElementById('m-qr-inp').click()"><i class="bi bi-upload me-1"></i>Subir QR</button>
+            </div>
+            <div class="col-12" id="comp-section" class="d-none">
+              <hr><p class="small fw-semibold mb-2">Comprobante del cliente:</p>
+              <img id="comp-img" style="max-height:200px;border-radius:10px;border:1px solid #eee;display:none">
+              <p id="comp-status" class="small mt-2"></p>
             </div>
           </div>
-          
-          <button class="btn btn-navy w-100 rounded-pill mb-4" onclick="adminSendQR()">
-            <i class="bi bi-qr-code me-2"></i>Enviar QR por WhatsApp
-          </button>
-          
-          <!-- ═════ SECCIÓN COMPROBANTE DEL CLIENTE ═════ -->
-          <div id="comp-section" class="p-3 border rounded-3 bg-light d-none">
-            <h6 class="fw-bold mb-3">
-              <i class="bi bi-receipt me-2" style="color:var(--gold)"></i>Comprobante de Pago
-            </h6>
-            
-            <!-- Estado del comprobante -->
-            <div id="comp-status-box" class="mb-3">
-              <span class="badge bg-secondary">⏳ Esperando comprobante</span>
-            </div>
-            
-            <!-- Vista previa del comprobante -->
-            <div class="text-center mb-3">
-              <img id="comp-preview" class="qr-img d-none" style="max-height:250px;cursor:pointer" 
-                  onclick="this.requestFullscreen?.()">
-              <p id="comp-placeholder" class="text-muted small mb-2">
-                El cliente subirá su comprobante por WhatsApp
-              </p>
-              <button class="btn btn-sm btn-outline-secondary d-none" id="btn-comp-manual" 
-                      onclick="document.getElementById('comp-manual-inp').click()">
-                <i class="bi bi-upload me-1"></i>Subir comprobante manualmente
-              </button>
-              <input type="file" id="comp-manual-inp" accept="image/*" class="d-none" 
-                    onchange="adminUploadReceiptManual(this)">
-            </div>
-            
-            <!-- Verificación de monto -->
-            <div class="row g-2 align-items-end mb-3">
-              <div class="col-md-6">
-                <label class="form-label small fw-semibold">Monto solicitado (Bs)</label>
-                <input type="text" class="form-control" id="m-monto-solicitado" readonly>
-              </div>
-              <div class="col-md-6">
-                <label class="form-label small fw-semibold">Monto verificado (Bs)</label>
-                <input type="number" class="form-control" id="m-monto-verificado" placeholder="Ej: 10">
-              </div>
-            </div>
-            
-            <!-- Botones de acción -->
-            <div class="d-flex gap-2 flex-wrap mb-3">
-              <button class="btn btn-success btn-sm rounded-pill flex-grow-1" 
-                      onclick="adminVerifyReceipt('correcto')">
-                <i class="bi bi-check-circle me-1"></i>✅ Monto Correcto
-              </button>
-              <button class="btn btn-warning btn-sm rounded-pill flex-grow-1" 
-                      onclick="adminVerifyReceipt('incorrecto')">
-                <i class="bi bi-exclamation-triangle me-1"></i>⚠️ Monto Incorrecto
-              </button>
-              <button class="btn btn-outline-secondary btn-sm rounded-pill" 
-                      onclick="adminRequestNewReceipt()">
-                <i class="bi bi-arrow-repeat me-1"></i>Solicitar Nuevo
-              </button>
-            </div>
-            
-            <!-- Nota para el cliente (si monto incorrecto) -->
-            <div id="comp-note-section" class="mt-3 d-none">
-              <label class="form-label small fw-semibold">Mensaje para el cliente</label>
-              <textarea class="form-control form-control-sm" id="comp-note" rows="2" 
-                        placeholder="Ej: El monto no coincide. Por favor verifica y envía nuevamente."></textarea>
-            </div>
-          </div>
-          <!-- ═════ FIN SECCIÓN COMPROBANTE ═════ -->
+          <button class="btn btn-navy w-100 rounded-pill" onclick="adminSendQR()"><i class="bi bi-qr-code me-2"></i>Enviar QR por WhatsApp</button>
         </div>
           <div id="amt-entrega" class="p-4 d-none">
             <div class="alert alert-warning small mb-3">
@@ -481,15 +411,15 @@ const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyqC4dhm2ZO09XK9QuhG
 
 /* ════════ PROPIEDADES ════════ */
 const PROPS=[
-  {id:'t1',tipo:'terreno',zona:'Bajo Irpavi',nombre:'Terreno – Zona Irpavi',precio:'5 Bs',precioReal:5,sup:'600 m²',badge:'🌿 TERRENO',meta:'Bajo Irpavi',icon:'bi-rulers',desc:'Terreno en zona consolidada de Irpavi. Precio real, ubicación exacta y contacto del dueño disponibles bajo solicitud.',img:'https://cdn2.infocasas.com.uy/repo/img/0764685fa2842deaf8d6cfff61f8b6a6a5683987.jpg',fb:'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=500&q=80'},
-  {id:'t2',tipo:'terreno',zona:'Achumani',nombre:'Terreno – Sector Jorenko',precio:'5 Bs',precioReal:5,sup:'578 m²',badge:'🌿 TERRENO',meta:'Achumani (Jorenko)',icon:'bi-rulers',desc:'Terreno amplio en sector residencial. Datos completos tras confirmar pago.',img:'https://cdn2.infocasas.com.uy/repo/img/419c92d563122cc8e5d658aa0814eea01e45e6c5.jpg',fb:'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=500&q=80'},
-  {id:'t3',tipo:'terreno',zona:'Calacoto',nombre:'Urb. Privada – Sequoia',precio:'5 Bs',precioReal:5,sup:'413 m²',badge:'🌿 TERRENO',meta:'Calacoto (Aranjuez)',icon:'bi-rulers',desc:'Lote en urbanización cerrada. Acceso controlado. Info exacta disponible.',img:'https://cdn4.fincaraiz.com.co/repo/img/th.outside800x600.96e3f19de4aa0057e2e06b8841ce69cd2aae0175.jpg',fb:'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=500&q=80'},
-  {id:'d1',tipo:'departamento',zona:'Achumani',nombre:'Depto. a Estrenar',precio:'5 Bs',precioReal:5,sup:'A Estrenar',badge:'🏢 DPTO',meta:'Achumani',icon:'bi-house',desc:'Departamento nuevo en zona céntrica. Detalles de venta y contacto directo.',img:'https://cdn2.infocasas.com.uy/repo/img/f9fdefa4800cda2e91f16fc889257b8fa06528b2.jpg',fb:'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=500&q=80'},
-  {id:'d2',tipo:'departamento',zona:'Calacoto',nombre:'Dúplex con Terraza',precio:'5 Bs',precioReal:5,sup:'Dúplex',badge:'🏢 DÚPLEX',meta:'Alto Calacoto',icon:'bi-layers',desc:'Dúplex exclusivo con terraza panorámica. Ubicación y precio real tras pago.',img:'https://cdn2.infocasas.com.uy/repo/img/d372d4ae4ec7ef3e88c3874faf43ba3750cbbed6.jpg',fb:'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=500&q=80'},
-  {id:'d3',tipo:'departamento',zona:'Los Álamos',nombre:'Penthouse 4D',precio:'5 Bs',precioReal:5,sup:'Exclusivo',badge:'✨ PENTHOUSE',meta:'Calacoto (Los Álamos)',icon:'bi-star',desc:'Penthouse premium. Vista a la ciudad. Datos de contacto y ubicación exacta.',img:'https://cdn2.infocasas.com.uy/repo/img/bfd8ae7137b58bd600cb2a525ce65d87c2a6a4e3.jpg',fb:'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=500&q=80'},
-  {id:'c1',tipo:'casa',zona:'Centro',nombre:'Casona Histórica',precio:'5 Bs',precioReal:5,sup:'Patrimonial',badge:'🏡 CASA',meta:'Casco Viejo',icon:'bi-building',desc:'Propiedad patrimonial en zona histórica. Info detallada y contacto del vendedor.',img:'https://cdn2.infocasas.com.uy/repo/img/f5c6fcd95d085ad7f631808dae7e306dc01c1658.jpg',fb:'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=500&q=80'},
-  {id:'c2',tipo:'casa',zona:'Achumani',nombre:'Casa Residencial',precio:'5 Bs',precioReal:5,sup:'Residencial',badge:'🏡 CASA',meta:'Achumani Central',icon:'bi-house-check',desc:'Casa familiar en zona tranquila. Servicios completos. Datos tras confirmación.',img:'https://cdn2.infocasas.com.uy/repo/img/b60d316f01d53683380cee1e0d54571d82a71fdc.jpg',fb:'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=500&q=80'},
-  {id:'c3',tipo:'casa',zona:'San Ramón',nombre:'Local / Casa Comercial',precio:'5 Bs',precioReal:5,sup:'Comercial',badge:'💼 COMERCIAL',meta:'Achumani (San Ramón)',icon:'bi-cash-coin',desc:'Espacio comercial con alto flujo. Precio y dueño verificados.',img:'https://cdn2.infocasas.com.uy/repo/img/fafd8009b101fe4568de966887542ddb2ac5ee9d.jpg',fb:'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=500&q=80'}
+  {id:'t1',tipo:'terreno',zona:'Bajo Irpavi',nombre:'Terreno – Zona Irpavi',precio:'10 Bs',precioReal:10,sup:'600 m²',badge:'🌿 TERRENO',meta:'Bajo Irpavi',icon:'bi-rulers',desc:'Terreno en zona consolidada de Irpavi. Precio real, ubicación exacta y contacto del dueño disponibles bajo solicitud.',img:'https://cdn2.infocasas.com.uy/repo/img/0764685fa2842deaf8d6cfff61f8b6a6a5683987.jpg',fb:'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=500&q=80'},
+  {id:'t2',tipo:'terreno',zona:'Achumani',nombre:'Terreno – Sector Jorenko',precio:'10 Bs',precioReal:10,sup:'578 m²',badge:'🌿 TERRENO',meta:'Achumani (Jorenko)',icon:'bi-rulers',desc:'Terreno amplio en sector residencial. Datos completos tras confirmar pago.',img:'https://cdn2.infocasas.com.uy/repo/img/419c92d563122cc8e5d658aa0814eea01e45e6c5.jpg',fb:'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=500&q=80'},
+  {id:'t3',tipo:'terreno',zona:'Calacoto',nombre:'Urb. Privada – Sequoia',precio:'10 Bs',precioReal:10,sup:'413 m²',badge:'🌿 TERRENO',meta:'Calacoto (Aranjuez)',icon:'bi-rulers',desc:'Lote en urbanización cerrada. Acceso controlado. Info exacta disponible.',img:'https://cdn4.fincaraiz.com.co/repo/img/th.outside800x600.96e3f19de4aa0057e2e06b8841ce69cd2aae0175.jpg',fb:'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=500&q=80'},
+  {id:'d1',tipo:'departamento',zona:'Achumani',nombre:'Depto. a Estrenar',precio:'10 Bs',precioReal:10,sup:'A Estrenar',badge:'🏢 DPTO',meta:'Achumani',icon:'bi-house',desc:'Departamento nuevo en zona céntrica. Detalles de venta y contacto directo.',img:'https://cdn2.infocasas.com.uy/repo/img/f9fdefa4800cda2e91f16fc889257b8fa06528b2.jpg',fb:'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=500&q=80'},
+  {id:'d2',tipo:'departamento',zona:'Calacoto',nombre:'Dúplex con Terraza',precio:'10 Bs',precioReal:10,sup:'Dúplex',badge:'🏢 DÚPLEX',meta:'Alto Calacoto',icon:'bi-layers',desc:'Dúplex exclusivo con terraza panorámica. Ubicación y precio real tras pago.',img:'https://cdn2.infocasas.com.uy/repo/img/d372d4ae4ec7ef3e88c3874faf43ba3750cbbed6.jpg',fb:'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=500&q=80'},
+  {id:'d3',tipo:'departamento',zona:'Los Álamos',nombre:'Penthouse 4D',precio:'10 Bs',precioReal:10,sup:'Exclusivo',badge:'✨ PENTHOUSE',meta:'Calacoto (Los Álamos)',icon:'bi-star',desc:'Penthouse premium. Vista a la ciudad. Datos de contacto y ubicación exacta.',img:'https://cdn2.infocasas.com.uy/repo/img/bfd8ae7137b58bd600cb2a525ce65d87c2a6a4e3.jpg',fb:'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=500&q=80'},
+  {id:'c1',tipo:'casa',zona:'Centro',nombre:'Casona Histórica',precio:'10 Bs',precioReal:10,sup:'Patrimonial',badge:'🏡 CASA',meta:'Casco Viejo',icon:'bi-building',desc:'Propiedad patrimonial en zona histórica. Info detallada y contacto del vendedor.',img:'https://cdn2.infocasas.com.uy/repo/img/f5c6fcd95d085ad7f631808dae7e306dc01c1658.jpg',fb:'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=500&q=80'},
+  {id:'c2',tipo:'casa',zona:'Achumani',nombre:'Casa Residencial',precio:'10 Bs',precioReal:10,sup:'Residencial',badge:'🏡 CASA',meta:'Achumani Central',icon:'bi-house-check',desc:'Casa familiar en zona tranquila. Servicios completos. Datos tras confirmación.',img:'https://cdn2.infocasas.com.uy/repo/img/b60d316f01d53683380cee1e0d54571d82a71fdc.jpg',fb:'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=500&q=80'},
+  {id:'c3',tipo:'casa',zona:'San Ramón',nombre:'Local / Casa Comercial',precio:'10 Bs',precioReal:10,sup:'Comercial',badge:'💼 COMERCIAL',meta:'Achumani (San Ramón)',icon:'bi-cash-coin',desc:'Espacio comercial con alto flujo. Precio y dueño verificados.',img:'https://cdn2.infocasas.com.uy/repo/img/fafd8009b101fe4568de966887542ddb2ac5ee9d.jpg',fb:'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=500&q=80'}
 ];
 
 /* ════════ API ════════ */
@@ -585,7 +515,7 @@ async function submitForm(){
   if(!nombre||!cel||!correo){err.textContent='⚠️ Completa nombre, celular y correo.';err.classList.remove('d-none');return;}
   if(!/\S+@\S+\.\S+/.test(correo)){err.textContent='⚠️ Correo inválido.';err.classList.remove('d-none');return;}
   
-  const cantPago = cart.length * 5;
+  const cantPago = cart.length * 10; // 10 Bs fijo
   const solicitud = cart.join(' | '); // Envía IDs exactos: t1 | d2 | c3
   
   showLoad('Enviando solicitud…');
@@ -682,8 +612,6 @@ function openAdmin(id){
     ea.className = 'badge-estado s-'+d.estado;
     ea.textContent = ESTADOS[d.estado] || d.estado;
     
-    updateCompView(d);
-
     // 🔧 FIX: Seleccionar el primer nav-link de forma segura
     const firstNavLink = document.querySelector('#admin-modal .nav-tabs .nav-link');
     amTab('info', firstNavLink);
@@ -698,7 +626,6 @@ function openAdmin(id){
     console.error('Error en openAdmin:', err);
     toast('Error al cargar la solicitud', 'error');
   }
-
 }
 function amTab(t,el){document.querySelectorAll('#admin-modal .nav-link').forEach(a=>a.classList.remove('active'));el&&el.classList.add('active');['info','pago','entrega','estado'].forEach(x=>document.getElementById('amt-'+x).classList.toggle('d-none',x!==t));}
 async function adminSendConfirm(){if(!_md||!confirm('¿Confirmar solicitud y enviar QR?'))return;showLoad('Enviando…');try{const res=await callAPI({action:'sendConfirm',id:_md.id,pass:_pass});hideLoad();if(res.success){toast('✅ Confirmado','success');adminModal.hide();await loadAdmin(true);}else toast('Error: '+(res.error||''),'error');}catch(e){hideLoad();toast(e.message||'Error de conexión','error');}}
@@ -721,43 +648,7 @@ async function adminSendInfoAuto(){
 async function adminSetStatus(estado){if(!_md||!confirm('¿Cambiar estado a "'+estado+'"?'))return;showLoad('Actualizando…');try{const res=await callAPI({action:'setStatus',id:_md.id,pass:_pass,estado});hideLoad();if(res.success){toast('Estado actualizado','success');adminModal.hide();await loadAdmin(true);}else toast('Error: '+(res.error||''),'error');}catch(e){hideLoad();toast(e.message||'Error de conexión','error');}}
 
 /* ════════ IMÁGENES ════════ */
-function compressQR(file){
-  return new Promise(res=>{
-    const c=document.createElement('canvas'), img=new Image();
-    
-    img.onload = () => {
-      // 🔧 AUMENTAR RESOLUCIÓN: 800px para QR legible en bancos
-      const MAX_SIZE = 800;
-      const ratio = Math.min(MAX_SIZE / img.width, MAX_SIZE / img.height, 1);
-      const w = Math.round(img.width * ratio);
-      const h = Math.round(img.height * ratio);
-      
-      c.width = w; c.height = h;
-      const ctx = c.getContext('2d');
-      
-      // 🔧 Calidad de renderizado alta
-      ctx.imageSmoothingEnabled = true;
-      ctx.imageSmoothingQuality = 'high';
-      ctx.drawImage(img, 0, 0, w, h);
-      
-      // 🔧 PNG sin compresión agresiva (0.95 = 95% calidad)
-      const dataUrl = c.toDataURL('image/png', 0.95);
-      const b64 = dataUrl.split(',')[1];
-      
-      res({ b64: b64, mime: 'image/png', width: w, height: h });
-    };
-    
-    img.onerror = () => {
-      console.error('❌ Error cargando imagen QR');
-      res({ b64: '', mime: 'image/png', width: 0, height: 0 });
-    };
-    
-    // 🔧 Usar FileReader para mejor compatibilidad
-    const reader = new FileReader();
-    reader.onload = (e) => { img.src = e.target.result; };
-    reader.readAsDataURL(file);
-  });
-}
+function compressQR(file){return new Promise(res=>{const c=document.createElement('canvas'),img=new Image();img.onload=()=>{const m=240,r=Math.min(m/img.width,m/img.height,1),w=Math.round(img.width*r),h=Math.round(img.height*r);c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);res({b64:c.toDataURL('image/png').split(',')[1],mime:'image/png'});};img.onerror=()=>res({b64:'',mime:'image/png'});img.src=URL.createObjectURL(file);});}
 
 /* ════════ INIT + ROUTER ════════ */
 window.addEventListener('DOMContentLoaded',()=>{
@@ -772,147 +663,6 @@ window.addEventListener('DOMContentLoaded',()=>{
   if(p.has('admin')){const sp=sessionStorage.getItem('lp_pass');if(sp){_pass=sp;loadAdmin();}else showView('v-admin-login');}
   else if(tk && tk.trim()){loadStatusByToken(tk.trim());}
 });
-
-/* ════════ FUNCIONES DE COMPROBANTE ════════ */
-
-// Actualizar vista de comprobante en modal admin
-function updateCompView(d){
-  const compSection = document.getElementById('comp-section');
-  const compBox = document.getElementById('comp-status-box');
-  const preview = document.getElementById('comp-preview');
-  const placeholder = document.getElementById('comp-placeholder');
-  const btnManual = document.getElementById('btn-comp-manual');
-  
-  // Montos
-  const montoSolicitado = d.cantPago || '';
-  document.getElementById('m-monto-solicitado').value = montoSolicitado ? montoSolicitado + ' Bs' : '';
-  document.getElementById('m-monto-verificado').value = montoSolicitado || '';
-  
-  if(d.compUrl){
-    preview.src = d.compUrl;
-    preview.classList.remove('d-none');
-    placeholder.classList.add('d-none');
-    btnManual.classList.remove('d-none');
-    compSection.classList.remove('d-none');
-    
-    // Estado del comprobante según estado de la solicitud
-    if(d.estado === 'comprobante_enviado' || d.estado === 'info_entregada' || d.estado === 'completado'){
-      compBox.innerHTML = '<span class="badge bg-success">✅ Comprobante verificado</span>';
-    } else if(d.estado === 'rechazado_pago'){
-      compBox.innerHTML = '<span class="badge bg-warning text-dark">⚠️ Monto incorrecto - Pendiente</span>';
-    } else {
-      compBox.innerHTML = '<span class="badge bg-info">📤 Comprobante recibido - Pendiente de verificar</span>';
-    }
-  } else {
-    preview.classList.add('d-none');
-    placeholder.classList.remove('d-none');
-    btnManual.classList.add('d-none');
-    // Solo mostrar sección si el estado ya pasó de qr_enviado
-    if(['comprobante_enviado','info_entregada','completado','rechazado_pago'].includes(d.estado)){
-      compSection.classList.remove('d-none');
-      compBox.innerHTML = '<span class="badge bg-secondary">⏳ Comprobante no registrado</span>';
-    } else {
-      compSection.classList.add('d-none');
-    }
-  }
-}
-
-// Subir comprobante manualmente (admin)
-async function adminUploadReceiptManual(input){
-  if(!input.files[0] || !_md) return;
-  showLoad('Subiendo comprobante...');
-  try{
-    const file = input.files[0];
-    const {b64, mime} = await compressQR(file); // Reusamos función con alta calidad
-    if(!b64) throw new Error('Error al procesar la imagen');
-    
-    const res = await callAPI({
-      action: 'uploadReceipt',
-      id: _md.id,
-      pass: _pass,
-      compB64: b64,
-      compMime: mime
-    });
-    hideLoad();
-    if(res.success){
-      toast('✅ Comprobante registrado', 'success');
-      await loadAdmin(true); // Recargar datos
-      openAdmin(_md.id); // Reabrir modal actualizado
-    } else {
-      toast('Error: ' + (res.error||''), 'error');
-    }
-  } catch(e){
-    hideLoad();
-    toast(e.message || 'Error de conexión', 'error');
-  }
-  input.value = ''; // Reset input
-}
-
-// Verificar monto del comprobante
-async function adminVerifyReceipt(result){
-  if(!_md) return;
-  
-  const montoVerificado = document.getElementById('m-monto-verificado').value.trim();
-  const note = document.getElementById('comp-note').value.trim();
-  
-  if(result === 'incorrecto' && !note){
-    toast('⚠️ Agrega un mensaje explicando el problema', 'warn');
-    document.getElementById('comp-note-section').classList.remove('d-none');
-    return;
-  }
-  
-  showLoad('Procesando verificación...');
-  try{
-    const res = await callAPI({
-      action: 'verifyReceipt',
-      id: _md.id,
-      pass: _pass,
-      resultado: result, // 'correcto' | 'incorrecto'
-      montoVerificado: montoVerificado,
-      nota: note
-    });
-    hideLoad();
-    if(res.success){
-      toast(result === 'correcto' ? '✅ Pago verificado' : '⚠️ Pago marcado como incorrecto', 'success');
-      adminModal.hide();
-      await loadAdmin(true);
-    } else {
-      toast('Error: ' + (res.error||''), 'error');
-    }
-  } catch(e){
-    hideLoad();
-    toast(e.message || 'Error de conexión', 'error');
-  }
-}
-
-// Solicitar nuevo comprobante al cliente
-async function adminRequestNewReceipt(){
-  if(!_md || !confirm('¿Solicitar al cliente que envíe un nuevo comprobante?')) return;
-  
-  const reason = prompt('Motivo de la solicitud (opcional):', 'El comprobante no es legible o el monto no coincide.');
-  if(reason === null) return; // Cancelado
-  
-  showLoad('Enviando solicitud...');
-  try{
-    const res = await callAPI({
-      action: 'requestNewReceipt',
-      id: _md.id,
-      pass: _pass,
-      motivo: reason || 'Comprobante no válido'
-    });
-    hideLoad();
-    if(res.success){
-      toast('📱 Solicitud enviada al cliente', 'success');
-      await loadAdmin(true);
-      openAdmin(_md.id);
-    } else {
-      toast('Error: ' + (res.error||''), 'error');
-    }
-  } catch(e){
-    hideLoad();
-    toast(e.message || 'Error de conexión', 'error');
-  }
-}
 </script>
 </body>
 </html>
