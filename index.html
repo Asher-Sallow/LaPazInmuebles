@@ -1,0 +1,668 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>InfoInmuebles LaPaz | Datos Verificados</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+  <link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+  <style>
+    :root{--navy:#0a1628;--navy2:#152942;--gold:#c9a84c;--gold-lt:#e8c96d;--cream:#f8f4ef;--card-r:18px;--green:#2d6a4f;--red:#b23a3a;--amber:#b8860b;--blue:#1d3557;}
+    body{font-family:'Lato',sans-serif;background:var(--cream);color:var(--navy);}
+    h1,h2,h3,h4,h5{font-family:'Playfair Display',serif;}
+    .view{display:none;}.view.active{display:block;}
+    .navbar-brand{font-family:'Playfair Display',serif;font-size:1.5rem;color:var(--gold)!important;letter-spacing:1px;}
+    .navbar{background:rgba(10,22,40,.97);backdrop-filter:blur(8px);}
+    .navbar .nav-link{color:rgba(255,255,255,.8)!important;transition:color .3s;cursor:pointer;}
+    .navbar .nav-link:hover{color:var(--gold)!important;}
+    .cart-btn{position:relative;}
+    .cart-badge{position:absolute;top:-6px;right:-8px;background:var(--gold);color:var(--navy);border-radius:50%;font-size:.66rem;font-weight:800;min-width:18px;height:18px;display:flex;align-items:center;justify-content:center;padding:0 4px;}
+    .hero-carousel{height:74vh;min-height:440px;}
+    .hero-carousel .carousel-inner,.hero-carousel .carousel-item{height:100%;}
+    .carousel-item{background-size:cover;background-position:center;}
+    .carousel-item::after{content:'';position:absolute;inset:0;background:linear-gradient(to bottom,rgba(10,22,40,.55),rgba(10,22,40,.85));}
+    .carousel-caption{z-index:10;bottom:15%;}
+    .carousel-caption h2{font-size:clamp(1.8rem,4vw,3rem);text-shadow:0 2px 12px rgba(0,0,0,.6);}
+    .badge-hero{background:var(--gold);color:var(--navy);font-size:.85rem;font-weight:700;letter-spacing:1px;padding:.45em 1em;border-radius:30px;}
+    .carousel-indicators [data-bs-target]{background-color:var(--gold);width:10px;height:10px;border-radius:50%;border:none;}
+    .filter-bar{background:#fff;border-radius:50px;box-shadow:0 4px 20px rgba(0,0,0,.08);padding:.4rem;display:inline-flex;gap:.3rem;flex-wrap:wrap;}
+    .filter-bar .btn{border-radius:40px;padding:.45rem 1.4rem;font-weight:700;font-size:.88rem;border:none;transition:all .3s;}
+    .filter-bar .btn.active{background:var(--navy);color:#fff;}
+    .filter-bar .btn:not(.active){background:transparent;color:var(--navy);}
+    .filter-bar .btn:not(.active):hover{background:rgba(10,22,40,.07);}
+    .prop-card{border:none;border-radius:var(--card-r);overflow:hidden;background:#fff;transition:transform .4s cubic-bezier(.17,.67,.52,1.2),box-shadow .4s;position:relative;}
+    .prop-card:hover{transform:translateY(-6px);box-shadow:0 20px 45px rgba(10,22,40,.18);}
+    .prop-card.in-cart{outline:3px solid var(--gold);box-shadow:0 0 0 5px rgba(201,168,76,.18);}
+    .prop-card.in-cart .cart-flag{display:flex;}
+    .cart-flag{display:none;position:absolute;top:12px;right:12px;z-index:11;width:30px;height:30px;border-radius:50%;background:var(--gold);color:var(--navy);align-items:center;justify-content:center;font-weight:700;box-shadow:0 2px 8px rgba(0,0,0,.3);}
+    .prop-img{height:200px;object-fit:cover;width:100%;cursor:pointer;}
+    .prop-badge{position:absolute;top:12px;left:12px;font-size:.72rem;font-weight:700;letter-spacing:.8px;padding:.3em .9em;border-radius:20px;z-index:10;}
+    .badge-info{background:#0a1628;color:var(--gold);}
+    .prop-card .card-body{padding:1.05rem 1.15rem;}
+    .prop-title{font-size:1rem;font-weight:700;margin-bottom:.3rem;}
+    .prop-price{font-size:1.12rem;color:var(--gold);font-weight:700;}
+    .prop-meta span{font-size:.78rem;color:#666;}
+    @keyframes fadeCard{from{opacity:0;transform:translateY(18px);}to{opacity:1;transform:translateY(0);}}
+    .prop-col.visible{animation:fadeCard .4s ease forwards;}.prop-col.hidden{display:none!important;}
+    .btn-gold{background:var(--gold);color:var(--navy);font-weight:700;border:none;}
+    .btn-gold:hover{background:var(--gold-lt);color:var(--navy);}
+    .btn-navy{background:var(--navy);color:#fff;font-weight:700;border:none;}
+    .btn-navy:hover{background:#15274a;color:#fff;}
+    .btn-outline-navy{background:transparent;border:1.5px solid var(--navy);color:var(--navy);font-weight:700;}
+    .btn-outline-navy:hover{background:var(--navy);color:#fff;}
+    .form-section{background:#fff;border-radius:20px;box-shadow:0 8px 40px rgba(10,22,40,.09);padding:2rem;}
+    .form-control,.form-select{border:1.5px solid #ddd;border-radius:10px;transition:border-color .3s,box-shadow .3s;}
+    .form-control:focus,.form-select:focus{border-color:var(--gold);box-shadow:0 0 0 3px rgba(201,168,76,.25);}
+    .section-title{position:relative;display:inline-block;}
+    .section-title::after{content:'';display:block;width:60%;height:3px;background:var(--gold);border-radius:2px;margin-top:6px;}
+    .modal-content{border:none;border-radius:20px;overflow:hidden;}
+    .modal-header-img{height:240px;object-fit:cover;width:100%;}
+    .modal-price{font-size:1.5rem;color:var(--gold);font-weight:700;}
+    /* CART OFFCANVAS */
+    #cartPanel{width:360px;}
+    .cart-item{display:flex;gap:.7rem;align-items:center;padding:.6rem 0;border-bottom:1px solid #eee;}
+    .cart-item img{width:54px;height:54px;border-radius:10px;object-fit:cover;}
+    .offcanvas-header{background:var(--navy);color:#fff;}
+    .offcanvas-header .btn-close{filter:invert(1);}
+    /* STEPS */
+    .step-bar{display:flex;align-items:flex-start;margin-bottom:26px;overflow-x:auto;padding-bottom:4px;}
+    .step{display:flex;flex-direction:column;align-items:center;flex:1;min-width:54px;}
+    .step-dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;border:2px solid transparent;}
+    .step-dot.done{background:var(--gold);color:var(--navy);border-color:var(--gold);}
+    .step-dot.active{background:rgba(201,168,76,.25);color:var(--navy);border-color:var(--gold);}
+    .step-dot.next{background:rgba(10,22,40,.06);color:#aaa;border-color:#ddd;}
+    .step-lbl{font-size:.6rem;text-align:center;margin-top:6px;color:#666;max-width:66px;}
+    .step-line{flex:1;height:2px;background:#ddd;margin-top:15px;}.step-line.done{background:var(--gold);}
+    .badge-estado{border-radius:20px;padding:4px 12px;font-size:.74rem;font-weight:700;border:1px solid;white-space:nowrap;display:inline-block;}
+    .s-pendiente{color:var(--amber);border-color:var(--amber);background:rgba(184,134,11,.1);}
+    .s-confirmado{color:var(--blue);border-color:var(--blue);background:rgba(29,53,87,.1);}
+    .s-qr_enviado{color:#7b2d00;border-color:#7b2d00;background:rgba(123,45,0,.1);}
+    .s-comprobante_enviado{color:#0077b6;border-color:#0077b6;background:rgba(0,119,182,.1);}
+    .s-info_entregada{color:var(--green);border-color:var(--green);background:rgba(45,106,79,.1);}
+    .s-completado{color:var(--green);border-color:var(--green);background:rgba(45,106,79,.15);}
+    .s-rechazado{color:var(--red);border-color:var(--red);background:rgba(178,58,58,.1);}
+    .upload-zone{border:2px dashed #ccc;border-radius:12px;padding:24px 16px;text-align:center;cursor:pointer;transition:all .25s;background:#faf7f2;}
+    .upload-zone:hover,.upload-zone.dragover{border-color:var(--gold);background:rgba(201,168,76,.07);}
+    .upload-zone i{color:var(--gold);}
+    .qr-img{max-width:220px;border-radius:12px;border:2px solid #eee;}
+    .top-nav{position:sticky;top:0;z-index:100;background:var(--navy);padding:14px 0;}
+    .stat-card{padding:18px 22px;border-radius:14px;background:#fff;box-shadow:0 4px 20px rgba(10,22,40,.07);}
+    .stat-num{font-size:1.9rem;font-weight:800;line-height:1;font-family:'Playfair Display',serif;}
+    .stat-lbl{font-size:.72rem;color:#888;margin-top:4px;text-transform:uppercase;letter-spacing:.05em;}
+    .admin-table thead th{background:var(--navy);color:var(--gold);font-size:.72rem;text-transform:uppercase;letter-spacing:.06em;font-weight:700;border:none;}
+    .admin-table tbody tr{cursor:pointer;transition:background .15s;}
+    .admin-table tbody tr:hover{background:rgba(201,168,76,.08);}
+    .admin-table td{vertical-align:middle;font-size:.86rem;}
+    .nav-tabs .nav-link{color:#888;border:none;border-bottom:2px solid transparent;border-radius:0;padding:10px 16px;font-weight:600;}
+    .nav-tabs .nav-link.active{color:var(--navy);border-bottom-color:var(--gold);background:none;}
+    .toast-container{z-index:9999;}
+    footer{background:var(--navy);color:rgba(255,255,255,.7);}
+    footer a{color:var(--gold);text-decoration:none;}
+    #loader{display:none;position:fixed;inset:0;z-index:9999;background:rgba(10,22,40,.55);backdrop-filter:blur(4px);align-items:center;justify-content:center;flex-direction:column;gap:14px;}
+    #loader.show{display:flex;}
+    .spinner-gold{width:42px;height:42px;border:4px solid rgba(255,255,255,.25);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;}
+    @keyframes spin{to{transform:rotate(360deg);}}
+    .toast-container{z-index:9999;}
+  </style>
+</head>
+<body>
+
+<div id="loader"><div class="spinner-gold"></div><span id="loader-msg" style="color:#fff;font-size:.9rem">Cargando…</span></div>
+<div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastBox"></div>
+
+<!-- ════════ VISTA 1 — CATÁLOGO / TIENDA ════════ -->
+<div id="v-catalogo" class="view active">
+  <nav class="navbar navbar-expand-lg sticky-top shadow-sm">
+    <div class="container">
+      <a class="navbar-brand" href="#">🔍 Info<span style="color:#fff">Inmuebles</span></a>
+      <div class="d-flex gap-2 ms-auto align-items-center">
+        <button class="btn btn-sm btn-outline-warning rounded-pill px-3 cart-btn" onclick="openCart()">
+          <i class="bi bi-cart3"></i> Carrito <span class="cart-badge" id="cartBadge" style="display:none">0</span>
+        </button>
+        <button class="navbar-toggler border-0" type="button" data-bs-toggle="collapse" data-bs-target="#navMenu"><i class="bi bi-list text-white fs-4"></i></button>
+      </div>
+      <div class="collapse navbar-collapse" id="navMenu">
+        <ul class="navbar-nav ms-auto gap-2 mt-2 mt-lg-0">
+          <li class="nav-item"><a class="nav-link" href="#propiedades">Propiedades</a></li>
+          <li class="nav-item"><a class="nav-link" onclick="showView('v-lookup')"><i class="bi bi-search me-1"></i>Mi solicitud</a></li>
+        </ul>
+      </div>
+    </div>
+  </nav>
+
+  <!-- HERO -->
+  <div id="heroCarousel" class="carousel slide hero-carousel" data-bs-ride="carousel" data-bs-interval="5500">
+    <div class="carousel-indicators">
+      <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="0" class="active"></button>
+      <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="1"></button>
+      <button type="button" data-bs-target="#heroCarousel" data-bs-slide-to="2"></button>
+    </div>
+    <div class="carousel-inner h-100">
+      <div class="carousel-item active" style="background-image:url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=1400&q=80');">
+        <div class="carousel-caption text-start"><span class="badge-hero d-inline-block mb-3">✦ INFORMACIÓN VERIFICADA</span><h2 class="fw-bold">Accede a datos exactos<br>de inmuebles en La Paz</h2><p class="d-none d-md-block opacity-75">Precio real, ubicación exacta y contacto directo del dueño.</p><a href="#propiedades" class="btn btn-gold rounded-pill px-4 mt-2">Solicitar Info <i class="bi bi-arrow-right ms-1"></i></a></div>
+      </div>
+      <div class="carousel-item" style="background-image:url('https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1400&q=80');">
+        <div class="carousel-caption text-start"><span class="badge-hero d-inline-block mb-3">✦ DATOS REALES, SIN INTERMEDIARIOS</span><h2 class="fw-bold">Evita visitas innecesarias.<br>Infórmate primero.</h2><p class="d-none d-md-block opacity-75">Solo 10 Bs por propiedad. Pago seguro y entrega inmediata.</p><a href="#propiedades" class="btn btn-gold rounded-pill px-4 mt-2">Solicitar Info <i class="bi bi-arrow-right ms-1"></i></a></div>
+      </div>
+      <div class="carousel-item" style="background-image:url('https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=1400&q=80');">
+        <div class="carousel-caption text-start"><span class="badge-hero d-inline-block mb-3">✦ COMPRA SEGURA</span><h2 class="fw-bold">Pagas la info, la<br>recibes al instante</h2><p class="d-none d-md-block opacity-75">Validamos cada dato antes de enviártelo.</p><a href="#propiedades" class="btn btn-gold rounded-pill px-4 mt-2">Ver Catálogo <i class="bi bi-arrow-right ms-1"></i></a></div>
+      </div>
+    </div>
+    <button class="carousel-control-prev" type="button" data-bs-target="#heroCarousel" data-bs-slide="prev"><span class="carousel-control-prev-icon"></span></button>
+    <button class="carousel-control-next" type="button" data-bs-target="#heroCarousel" data-bs-slide="next"><span class="carousel-control-next-icon"></span></button>
+  </div>
+
+  <!-- PASOS -->
+  <section class="py-4 bg-white shadow-sm">
+    <div class="container"><div class="row text-center g-3">
+      <div class="col-4"><div class="fw-bold" style="color:var(--gold);font-size:1.4rem">1</div><small class="text-muted">Agrega inmuebles al carrito</small></div>
+      <div class="col-4"><div class="fw-bold" style="color:var(--gold);font-size:1.4rem">2</div><small class="text-muted">Solicita info y confirma tu pedido</small></div>
+      <div class="col-4"><div class="fw-bold" style="color:var(--gold);font-size:1.4rem">3</div><small class="text-muted">Paga y recibe los datos verificados</small></div>
+    </div></div>
+  </section>
+
+  <!-- CATÁLOGO -->
+  <section id="propiedades" class="py-5">
+    <div class="container">
+      <div class="text-center mb-4" data-aos="fade-up"><h2 class="section-title">Inmuebles Disponibles</h2><p class="text-muted mt-2">Selecciona los que te interesen. <strong>10 Bs por propiedad</strong>. Recibe precio, ubicación exacta y contacto directo.</p></div>
+      <div class="text-center mb-4">
+        <div class="filter-bar">
+          <button class="btn active" data-filter="all">Todos</button>
+          <button class="btn" data-filter="terreno">🌿 Terrenos</button>
+          <button class="btn" data-filter="departamento">🏢 Departamentos</button>
+          <button class="btn" data-filter="casa">🏡 Casas</button>
+        </div>
+      </div>
+      <div class="row g-4" id="propGrid"></div>
+    </div>
+  </section>
+
+  <!-- DATOS / SOLICITUD -->
+  <section id="contacto" class="py-5" style="background:linear-gradient(135deg,#0a1628,#152942);">
+    <div class="container">
+      <div class="text-center mb-4"><h2 class="text-white section-title">Solicita tu Información</h2><p class="text-white-50">Revisa tu carrito, completa tus datos y te enviamos el QR de pago.</p></div>
+      <div class="form-section">
+        <h6 class="fw-bold mb-2"><i class="bi bi-cart-check me-2" style="color:var(--gold)"></i>Tu pedido (<span id="formCartCount">0</span>)</h6>
+        <div id="formCartList" class="mb-3"></div>
+        <div id="formCartEmpty" class="alert alert-secondary small rounded-3"><i class="bi bi-info-circle me-2"></i>Tu carrito está vacío. Selecciona inmuebles.</div>
+        <div class="alert alert-info small mb-3 d-flex justify-content-between align-items-center">
+          <span><i class="bi bi-info-circle me-1"></i>Total a pagar:</span>
+          <strong id="formTotal" style="color:var(--gold);font-size:1.1rem">0 Bs</strong>
+        </div>
+        <div class="row g-3 mt-1">
+          <div class="col-md-6"><label class="form-label fw-semibold small">Nombre Completo *</label><input type="text" class="form-control" id="f-nombre" placeholder="Ej. Juan Mamani"></div>
+          <div class="col-md-6"><label class="form-label fw-semibold small">Celular / WhatsApp *</label><div class="input-group"><span class="input-group-text">+591</span><input type="tel" class="form-control" id="f-celular" placeholder="71234567"></div></div>
+          <div class="col-12"><label class="form-label fw-semibold small">Correo Electrónico *</label><input type="email" class="form-control" id="f-correo" placeholder="juan@gmail.com"></div>
+          <div class="col-12"><label class="form-label fw-semibold small">Mensaje / Consulta</label><textarea class="form-control" id="f-mensaje" rows="3" placeholder="¿Algo que debamos saber?"></textarea></div>
+        </div>
+        <div id="form-error" class="alert alert-danger mt-3 d-none rounded-3 small"></div>
+        <div class="text-center mt-4">
+          <button class="btn btn-navy btn-lg px-5 rounded-pill" onclick="submitForm()"><i class="bi bi-send-fill me-2"></i>Solicitar Información</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="py-4 text-center">
+    <p class="mb-1"><strong style="color:var(--gold)">InfoInmuebles LaPaz</strong></p>
+    <p class="small mb-0">Datos verificados de inmuebles en Bolivia • <a href="#" onclick="showView('v-admin-login');return false;"><i class="bi bi-lock me-1"></i>Admin</a></p>
+  </footer>
+</div>
+
+<!-- CART OFFCANVAS -->
+<div class="offcanvas offcanvas-end" tabindex="-1" id="cartPanel">
+  <div class="offcanvas-header"><h5 class="offcanvas-title fw-bold"><i class="bi bi-cart3 me-2"></i>Mi Carrito</h5><button type="button" class="btn-close" data-bs-dismiss="offcanvas"></button></div>
+  <div class="offcanvas-body d-flex flex-column">
+    <div id="cartList" class="flex-grow-1"></div>
+    <div id="cartEmpty" class="text-center text-muted py-5"><i class="bi bi-cart-x fs-1"></i><p class="mt-2">Tu carrito está vacío</p></div>
+    <div class="border-top pt-3">
+      <p class="small text-muted mb-2">Propiedades: <strong id="cartTotal">0</strong></p>
+      <p class="fw-bold mb-2">Total: <span id="cartTotalBs" style="color:var(--gold)">0 Bs</span></p>
+      <button class="btn btn-navy w-100 rounded-pill" onclick="cartToForm()"><i class="bi bi-arrow-right-circle me-2"></i>Continuar</button>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL DETALLE -->
+<div class="modal fade" id="propModal" tabindex="-1">
+  <div class="modal-dialog modal-dialog-centered modal-lg">
+    <div class="modal-content shadow-lg">
+      <div class="position-relative">
+        <img id="modalImg" src="" class="modal-header-img">
+        <button type="button" class="btn-close position-absolute top-0 end-0 m-3 bg-white opacity-100 rounded-circle p-2" data-bs-dismiss="modal"></button>
+        <span id="modalBadge" class="prop-badge badge-info">ℹ️ INFO</span>
+      </div>
+      <div class="modal-body p-4">
+        <h4 id="modalNombre" class="fw-bold mb-1"></h4>
+        <p class="modal-price mb-2" id="modalPrecio"></p>
+        <div class="d-flex gap-3 mb-3 flex-wrap" id="modalMeta"></div>
+        <p class="text-muted" id="modalDesc"></p>
+        <p class="small text-warning fw-bold"><i class="bi bi-shield-check me-1"></i>Al solicitar recibirás: precio exacto, ubicación detallada y contacto del dueño.</p>
+      </div>
+      <div class="modal-footer border-0 justify-content-center pb-4">
+        <button class="btn btn-gold px-4 rounded-pill" id="btnModalCart"></button>
+        <button class="btn btn-outline-secondary px-4 rounded-pill" data-bs-dismiss="modal">Cerrar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ VISTA 2 — ÉXITO ════════ -->
+<div id="v-success" class="view">
+  <div class="container py-5 d-flex align-items-center justify-content-center" style="min-height:100vh">
+    <div class="text-center" style="max-width:520px">
+      <div style="width:84px;height:84px;background:var(--gold);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 24px;font-size:2.2rem">✅</div>
+      <h2 class="fw-bold mb-2">¡Solicitud recibida!</h2>
+      <p class="text-muted">Estamos validando los datos. En breve te confirmamos por <strong>WhatsApp</strong> y te enviamos el QR de pago.</p>
+      <div class="form-section p-3 mb-4" style="text-align:left">
+        <p class="small text-muted mb-1"><i class="bi bi-key me-1"></i>Tu token de seguimiento:</p>
+        <p id="success-token" class="mb-0" style="word-break:break-all;color:var(--navy);font-weight:700;font-family:monospace;font-size:.85rem"></p>
+      </div>
+      <div class="d-flex gap-3 justify-content-center flex-wrap">
+        <button class="btn btn-navy rounded-pill px-4" id="btn-ver-estado"><i class="bi bi-eye me-1"></i>Ver estado</button>
+        <button class="btn btn-outline-navy rounded-pill px-4" onclick="showView('v-catalogo')"><i class="bi bi-house me-1"></i>Inicio</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ VISTA 3 — BUSCAR TOKEN ════════ -->
+<div id="v-lookup" class="view">
+  <nav class="top-nav"><div class="container d-flex align-items-center gap-3"><button class="btn btn-sm btn-outline-warning rounded-pill" onclick="showView('v-catalogo')"><i class="bi bi-arrow-left me-1"></i>Volver</button><span class="navbar-brand m-0">🔍 Info<span style="color:#fff">Inmuebles</span></span></div></nav>
+  <div class="container py-5 d-flex align-items-center justify-content-center" style="min-height:78vh">
+    <div class="form-section" style="max-width:440px;width:100%">
+      <h5 class="fw-bold mb-1"><i class="bi bi-search me-2" style="color:var(--gold)"></i>Consultar mi solicitud</h5>
+      <p class="text-muted small mb-3">Ingresa el token que recibiste por WhatsApp.</p>
+      <input type="text" class="form-control mb-3" id="lookup-token" placeholder="Pega tu token aquí…">
+      <div id="lookup-error" class="d-none mb-3 text-danger small"></div>
+      <button class="btn btn-navy w-100 rounded-pill" onclick="lookupStatus()"><i class="bi bi-eye me-2"></i>Ver estado</button>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ VISTA 4 — ESTADO ════════ -->
+<div id="v-estado" class="view">
+  <nav class="top-nav"><div class="container d-flex align-items-center justify-content-between"><span class="navbar-brand m-0">🔍 Info<span style="color:#fff">Inmuebles</span></span><button class="btn btn-sm btn-outline-warning rounded-pill" onclick="showView('v-catalogo')"><i class="bi bi-house me-1"></i>Inicio</button></div></nav>
+  <div class="container py-5"><div class="row justify-content-center"><div class="col-lg-7">
+    <div class="form-section mb-4">
+      <div class="d-flex justify-content-between align-items-start flex-wrap gap-2 mb-3">
+        <div><p class="small text-muted mb-1">SOLICITUD #<span id="st-id"></span></p><h5 id="st-nombre" class="fw-bold m-0"></h5><p id="st-prop" class="text-muted small mt-1 mb-0"></p></div>
+        <span id="st-badge" class="badge-estado"></span>
+      </div>
+      <div class="step-bar" id="st-steps"></div>
+      <p id="st-fecha" class="small text-muted m-0"></p>
+    </div>
+    <div id="st-content"></div>
+  </div></div></div>
+</div>
+
+<!-- ════════ VISTA 5 — ADMIN LOGIN ════════ -->
+<div id="v-admin-login" class="view">
+  <div class="container d-flex align-items-center justify-content-center" style="min-height:100vh">
+    <div class="form-section" style="max-width:380px;width:100%">
+      <div class="text-center mb-4"><div style="width:54px;height:54px;background:var(--navy);border-radius:14px;display:flex;align-items:center;justify-content:center;margin:0 auto 12px"><i class="bi bi-shield-lock-fill" style="color:var(--gold);font-size:1.3rem"></i></div><h5 class="fw-bold m-0">Panel de Administración</h5><p class="text-muted small">InfoInmuebles LaPaz</p></div>
+      <label class="form-label fw-semibold small">Contraseña</label>
+      <input type="password" class="form-control mb-3" id="admin-pass" placeholder="Contraseña" onkeydown="if(event.key==='Enter')adminLogin()">
+      <div id="admin-login-err" class="d-none mb-3 text-danger small text-center"></div>
+      <button class="btn btn-navy w-100 rounded-pill" onclick="adminLogin()"><i class="bi bi-unlock me-2"></i>Entrar</button>
+      <div class="text-center mt-3"><button class="btn btn-link btn-sm text-muted" onclick="showView('v-catalogo')"><i class="bi bi-arrow-left me-1"></i>Volver</button></div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════ VISTA 6 — ADMIN ════════ -->
+<div id="v-admin" class="view">
+  <nav class="top-nav"><div class="container d-flex align-items-center justify-content-between">
+    <span class="navbar-brand m-0">🔍 Info<span style="color:#fff">Inmuebles</span> <span style="color:var(--gold);font-size:.7rem;font-weight:700">ADMIN</span></span>
+    <div class="d-flex gap-2 align-items-center">
+      <button class="btn btn-sm btn-outline-warning rounded-pill" onclick="loadAdmin()"><i class="bi bi-arrow-clockwise"></i></button>
+      <button class="btn btn-sm btn-outline-light rounded-pill" onclick="adminLogout()"><i class="bi bi-box-arrow-right"></i></button>
+    </div>
+  </div></nav>
+  <div class="container py-4">
+    <div class="row g-3 mb-4" id="admin-stats"></div>
+    <div class="d-flex gap-2 mb-3 flex-wrap">
+      <select class="form-select" id="admin-filter" onchange="filterTable()" style="max-width:210px;font-size:.875rem">
+        <option value="">Todos los estados</option><option value="pendiente">Pendiente</option><option value="confirmado">Confirmado</option>
+        <option value="qr_enviado">QR enviado</option><option value="comprobante_enviado">Comprobante recibido</option>
+        <option value="info_entregada">Info entregada</option><option value="completado">Completado</option><option value="rechazado">Rechazado</option>
+      </select>
+      <input type="text" class="form-control" id="admin-search" placeholder="Buscar nombre o celular…" oninput="filterTable()" style="max-width:240px;font-size:.875rem">
+    </div>
+    <div class="bg-white shadow-sm" style="border-radius:14px;overflow:hidden">
+      <div class="table-responsive"><table class="table admin-table mb-0 align-middle"><thead><tr><th>#</th><th>Cliente</th><th>Celular</th><th>Cant.</th><th>Estado</th><th>Total (Bs)</th><th>Fecha</th><th></th></tr></thead><tbody id="admin-tbody"></tbody></table></div>
+      <div id="admin-empty" class="d-none text-center py-5 text-muted"><i class="bi bi-inbox fs-2"></i><br>No hay solicitudes aún</div>
+    </div>
+  </div>
+</div>
+
+<!-- MODAL ADMIN -->
+<div class="modal fade" id="admin-modal" tabindex="-1">
+  <div class="modal-dialog modal-lg modal-dialog-scrollable">
+    <div class="modal-content">
+      <div class="modal-header" style="background:var(--navy)"><div><h5 class="modal-title text-white fw-bold" id="amTitle"></h5><span id="amBadge" class="badge-estado"></span></div><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+      <div class="modal-body p-0">
+        <ul class="nav nav-tabs px-3 pt-2">
+          <li class="nav-item"><a href="#" class="nav-link active" onclick="amTab('info',this);return false">Info</a></li>
+          <li class="nav-item"><a href="#" class="nav-link" onclick="amTab('pago',this);return false">Pago</a></li>
+          <li class="nav-item"><a href="#" class="nav-link" onclick="amTab('entrega',this);return false">Entregar</a></li>
+          <li class="nav-item"><a href="#" class="nav-link" onclick="amTab('estado',this);return false">Estado</a></li>
+        </ul>
+        <div id="amt-info" class="p-4">
+          <div class="row g-3">
+            <div class="col-6"><p class="small text-muted mb-0">NOMBRE</p><p id="ai-nombre" class="fw-semibold"></p></div>
+            <div class="col-6"><p class="small text-muted mb-0">CELULAR</p><p id="ai-cel" class="fw-semibold"></p></div>
+            <div class="col-6"><p class="small text-muted mb-0">CORREO</p><p id="ai-correo" class="small"></p></div>
+            <div class="col-6"><p class="small text-muted mb-0">FECHA</p><p id="ai-ts" class="small"></p></div>
+            <div class="col-6"><p class="small text-muted mb-0">CANT. INMUEBLES</p><p id="ai-cant" class="fw-semibold"></p></div>
+            <div class="col-6"><p class="small text-muted mb-0">TOKEN</p><p id="ai-token" class="small" style="word-break:break-all;font-family:monospace"></p></div>
+            <div class="col-12"><p class="small text-muted mb-0">INMUEBLES SOLICITADOS</p><p id="ai-solicitud" class="small"></p></div>
+          </div>
+          <hr><button class="btn btn-outline-navy btn-sm rounded-pill" onclick="adminSendConfirm()"><i class="bi bi-check2-all me-1"></i>Confirmar solicitud y enviar QR</button>
+        </div>
+        <div id="amt-pago" class="p-4 d-none">
+          <p class="text-muted small">El cliente paga vía QR. Verifica el monto recibido antes de entregar.</p>
+          <div class="row g-3 mb-3">
+            <div class="col-md-6"><label class="form-label small fw-semibold">Monto total (Bs)</label><input type="text" class="form-control" id="m-monto" readonly placeholder="Calculado automáticamente"></div>
+            <div class="col-md-6"><label class="form-label small fw-semibold">QR de pago</label>
+              <div class="text-center"><img id="qr-preview-img" class="qr-img d-none"></div>
+              <input type="file" id="m-qr-inp" accept="image/*" class="d-none" onchange="previewQR(this)">
+              <button class="btn btn-sm btn-outline-secondary w-100 mt-2" onclick="document.getElementById('m-qr-inp').click()"><i class="bi bi-upload me-1"></i>Subir QR</button>
+            </div>
+            <div class="col-12" id="comp-section" class="d-none">
+              <hr><p class="small fw-semibold mb-2">Comprobante del cliente:</p>
+              <img id="comp-img" style="max-height:200px;border-radius:10px;border:1px solid #eee;display:none">
+              <p id="comp-status" class="small mt-2"></p>
+            </div>
+          </div>
+          <button class="btn btn-navy w-100 rounded-pill" onclick="adminSendQR()"><i class="bi bi-qr-code me-2"></i>Enviar QR por WhatsApp</button>
+        </div>
+          <div id="amt-entrega" class="p-4 d-none">
+            <div class="alert alert-warning small mb-3">
+              <i class="bi bi-info-circle me-1"></i>Al hacer clic, el sistema leerá los códigos solicitados, buscará <strong>Precio, Ubicación Exacta y Contacto</strong> en la Hoja 2 y enviará todo automáticamente por WhatsApp.
+            </div>
+            <button class="btn btn-gold w-100 rounded-pill" onclick="adminSendInfoAuto()"><i class="bi bi-send me-2"></i>Entregar Información Automática</button>
+          </div>
+        <div id="amt-estado" class="p-4 d-none">
+          <p class="text-muted small">Cambia el estado manualmente.</p>
+          <div class="d-flex flex-wrap gap-2">
+            <button class="btn btn-outline-secondary btn-sm rounded-pill" onclick="adminSetStatus('pendiente')">⏳ Pendiente</button>
+            <button class="btn btn-outline-secondary btn-sm rounded-pill" onclick="adminSetStatus('confirmado')">✅ Confirmado</button>
+            <button class="btn btn-outline-secondary btn-sm rounded-pill" onclick="adminSetStatus('qr_enviado')">📱 QR Enviado</button>
+            <button class="btn btn-outline-secondary btn-sm rounded-pill" onclick="adminSetStatus('comprobante_enviado')">💳 Comprobante Recibido</button>
+            <button class="btn btn-outline-secondary btn-sm rounded-pill" onclick="adminSetStatus('info_entregada')">📤 Info Entregada</button>
+            <button class="btn btn-outline-secondary btn-sm rounded-pill" onclick="adminSetStatus('completado')">🏁 Completado</button>
+            <button class="btn btn-outline-secondary btn-sm rounded-pill" style="color:var(--red)" onclick="adminSetStatus('rechazado')">❌ Rechazado</button>
+          </div>
+          <hr><p class="small text-muted">Estado actual: <span id="am-estado-actual" class="badge-estado"></span></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+<script>
+/* ════════ CONFIG ════════ */
+const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbyqC4dhm2ZO09XK9QuhGovC_xCCeFBoXwJwnu7mgj7Mi3UV_4WGu0e9AeHJ9u4BLhe4/exec';
+
+/* ════════ PROPIEDADES ════════ */
+const PROPS=[
+  {id:'t1',tipo:'terreno',zona:'Bajo Irpavi',nombre:'Terreno – Zona Irpavi',precio:'10 Bs',precioReal:10,sup:'600 m²',badge:'🌿 TERRENO',meta:'Bajo Irpavi',icon:'bi-rulers',desc:'Terreno en zona consolidada de Irpavi. Precio real, ubicación exacta y contacto del dueño disponibles bajo solicitud.',img:'https://cdn2.infocasas.com.uy/repo/img/0764685fa2842deaf8d6cfff61f8b6a6a5683987.jpg',fb:'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=500&q=80'},
+  {id:'t2',tipo:'terreno',zona:'Achumani',nombre:'Terreno – Sector Jorenko',precio:'10 Bs',precioReal:10,sup:'578 m²',badge:'🌿 TERRENO',meta:'Achumani (Jorenko)',icon:'bi-rulers',desc:'Terreno amplio en sector residencial. Datos completos tras confirmar pago.',img:'https://cdn2.infocasas.com.uy/repo/img/419c92d563122cc8e5d658aa0814eea01e45e6c5.jpg',fb:'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=500&q=80'},
+  {id:'t3',tipo:'terreno',zona:'Calacoto',nombre:'Urb. Privada – Sequoia',precio:'10 Bs',precioReal:10,sup:'413 m²',badge:'🌿 TERRENO',meta:'Calacoto (Aranjuez)',icon:'bi-rulers',desc:'Lote en urbanización cerrada. Acceso controlado. Info exacta disponible.',img:'https://cdn4.fincaraiz.com.co/repo/img/th.outside800x600.96e3f19de4aa0057e2e06b8841ce69cd2aae0175.jpg',fb:'https://images.unsplash.com/photo-1500382017468-9049fed747ef?w=500&q=80'},
+  {id:'d1',tipo:'departamento',zona:'Achumani',nombre:'Depto. a Estrenar',precio:'10 Bs',precioReal:10,sup:'A Estrenar',badge:'🏢 DPTO',meta:'Achumani',icon:'bi-house',desc:'Departamento nuevo en zona céntrica. Detalles de venta y contacto directo.',img:'https://cdn2.infocasas.com.uy/repo/img/f9fdefa4800cda2e91f16fc889257b8fa06528b2.jpg',fb:'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=500&q=80'},
+  {id:'d2',tipo:'departamento',zona:'Calacoto',nombre:'Dúplex con Terraza',precio:'10 Bs',precioReal:10,sup:'Dúplex',badge:'🏢 DÚPLEX',meta:'Alto Calacoto',icon:'bi-layers',desc:'Dúplex exclusivo con terraza panorámica. Ubicación y precio real tras pago.',img:'https://cdn2.infocasas.com.uy/repo/img/d372d4ae4ec7ef3e88c3874faf43ba3750cbbed6.jpg',fb:'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=500&q=80'},
+  {id:'d3',tipo:'departamento',zona:'Los Álamos',nombre:'Penthouse 4D',precio:'10 Bs',precioReal:10,sup:'Exclusivo',badge:'✨ PENTHOUSE',meta:'Calacoto (Los Álamos)',icon:'bi-star',desc:'Penthouse premium. Vista a la ciudad. Datos de contacto y ubicación exacta.',img:'https://cdn2.infocasas.com.uy/repo/img/bfd8ae7137b58bd600cb2a525ce65d87c2a6a4e3.jpg',fb:'https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=500&q=80'},
+  {id:'c1',tipo:'casa',zona:'Centro',nombre:'Casona Histórica',precio:'10 Bs',precioReal:10,sup:'Patrimonial',badge:'🏡 CASA',meta:'Casco Viejo',icon:'bi-building',desc:'Propiedad patrimonial en zona histórica. Info detallada y contacto del vendedor.',img:'https://cdn2.infocasas.com.uy/repo/img/f5c6fcd95d085ad7f631808dae7e306dc01c1658.jpg',fb:'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=500&q=80'},
+  {id:'c2',tipo:'casa',zona:'Achumani',nombre:'Casa Residencial',precio:'10 Bs',precioReal:10,sup:'Residencial',badge:'🏡 CASA',meta:'Achumani Central',icon:'bi-house-check',desc:'Casa familiar en zona tranquila. Servicios completos. Datos tras confirmación.',img:'https://cdn2.infocasas.com.uy/repo/img/b60d316f01d53683380cee1e0d54571d82a71fdc.jpg',fb:'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=500&q=80'},
+  {id:'c3',tipo:'casa',zona:'San Ramón',nombre:'Local / Casa Comercial',precio:'10 Bs',precioReal:10,sup:'Comercial',badge:'💼 COMERCIAL',meta:'Achumani (San Ramón)',icon:'bi-cash-coin',desc:'Espacio comercial con alto flujo. Precio y dueño verificados.',img:'https://cdn2.infocasas.com.uy/repo/img/fafd8009b101fe4568de966887542ddb2ac5ee9d.jpg',fb:'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=500&q=80'}
+];
+
+/* ════════ API ════════ */
+async function callAPI(params){
+  if(/PEGA_AQUI|PEGA_AQUI_TU_ID/.test(SCRIPT_URL)) throw new Error('Falta configurar SCRIPT_URL.');
+  let r;
+  try{ r=await fetch(SCRIPT_URL,{method:'POST',body:JSON.stringify(params)}); }
+  catch(net){ throw new Error('No conecta con el servidor. Verifica internet y despliegue.'); }
+  const txt=await r.text();
+  try{ return JSON.parse(txt); }
+  catch(parse){
+    if(/<html|Authoriz|Iniciar sesión|Sign in|login/i.test(txt)) throw new Error('El Apps Script pide autorización. Verifica acceso "Cualquier persona".');
+    throw new Error('Respuesta inesperada: '+txt.slice(0,100));
+  }
+}
+
+/* ════════ HELPERS UI ════════ */
+function showLoad(m='Procesando…'){document.getElementById('loader-msg').textContent=m;document.getElementById('loader').classList.add('show');}
+function hideLoad(){document.getElementById('loader').classList.remove('show');}
+function showView(id){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));const t=document.getElementById(id);if(t)t.classList.add('active');window.scrollTo(0,0);if(id!=='v-admin')stopAuto();}
+function toast(msg,type='info'){const c={success:'#2d6a4f',error:'#b23a3a',info:'#0a1628',warn:'#b8860b'};const el=document.createElement('div');el.className='toast show border-0 shadow-lg mb-2';el.style.cssText=`border-left:4px solid ${c[type]||c.info};background:#fff;min-width:240px;border-radius:10px;`;el.innerHTML=`<div class="toast-body small fw-semibold" style="color:var(--navy)">${msg}</div>`;document.getElementById('toastBox').appendChild(el);setTimeout(()=>el.remove(),4200);}
+const ESTADOS={pendiente:'⏳ Pendiente',confirmado:'✅ Confirmado',qr_enviado:'📱 QR Enviado',comprobante_enviado:'💳 Comprobante Recibido',info_entregada:'📤 Info Entregada',completado:'🏁 Completado',rechazado:'❌ Rechazado'};
+function badgeHTML(e){return `<span class="badge-estado s-${e}">${ESTADOS[e]||e}</span>`;}
+
+/* ════════ CALENDARIO ════════ */
+function gcalUrl(fechaISO,hora,titulo,lugar,detalle){return '';} // No necesario para info
+
+/* ════════ CATÁLOGO + CARRITO ════════ */
+let cart=[]; let propModal,adminModal,cartOff,modalId=null;
+function renderGrid(){
+  document.getElementById('propGrid').innerHTML=PROPS.map((p,i)=>`
+    <div class="col-md-6 col-lg-4 prop-col visible" data-type="${p.tipo}" data-aos="fade-up" data-aos-delay="${(i%3)*70}">
+      <div class="card prop-card h-100" data-id="${p.id}">
+        <span class="cart-flag"><i class="bi bi-check-lg"></i></span>
+        <span class="prop-badge badge-info">${p.badge}</span>
+        <img src="${p.img}" class="prop-img" onerror="this.src='${p.fb}'" onclick="openProp('${p.id}')">
+        <div class="card-body">
+          <p class="prop-title" onclick="openProp('${p.id}')" style="cursor:pointer">${p.nombre}</p>
+          <p class="prop-price mb-1">Info: ${p.precio}</p>
+          <div class="prop-meta d-flex gap-3 mb-3"><span><i class="bi ${p.icon} me-1"></i>${p.sup}</span><span><i class="bi bi-geo-alt me-1"></i>${p.meta}</span></div>
+          <button class="btn btn-sm w-100 rounded-pill btn-cart" data-id="${p.id}" onclick="toggleCart('${p.id}')"></button>
+        </div>
+      </div>
+    </div>`).join('');
+  refreshCart();
+}
+document.querySelectorAll('.filter-bar .btn').forEach(b=>b.addEventListener('click',()=>{
+  document.querySelectorAll('.filter-bar .btn').forEach(x=>x.classList.remove('active'));b.classList.add('active');
+  const f=b.dataset.filter;
+  document.querySelectorAll('.prop-col').forEach((c,i)=>{const ok=f==='all'||c.dataset.type===f;c.classList.toggle('hidden',!ok);c.classList.toggle('visible',ok);if(ok)c.style.animationDelay=(i%3*70)+'ms';});
+}));
+function openProp(id){const p=PROPS.find(x=>x.id===id);if(!p)return;modalId=id;
+  document.getElementById('modalImg').src=p.img;document.getElementById('modalImg').onerror=function(){this.src=p.fb;};
+  document.getElementById('modalNombre').textContent=p.nombre;document.getElementById('modalPrecio').textContent='Información: '+p.precio;
+  document.getElementById('modalDesc').textContent=p.desc;
+  document.getElementById('modalMeta').innerHTML=`<span class="badge bg-light text-dark"><i class="bi ${p.icon} me-1"></i>${p.sup}</span><span class="badge bg-light text-dark"><i class="bi bi-geo-alt me-1"></i>${p.meta}</span>`;
+  updModalBtn();propModal.show();
+}
+function updModalBtn(){const b=document.getElementById('btnModalCart');const inc=cart.includes(modalId);
+  b.innerHTML=inc?'<i class="bi bi-cart-dash me-2"></i>Quitar':'<i class="bi bi-cart-plus me-2"></i>Agregar';
+  b.className='btn px-4 rounded-pill '+(inc?'btn-outline-navy':'btn-gold');}
+function toggleCart(id){const i=cart.indexOf(id);if(i>=0)cart.splice(i,1);else cart.push(id);refreshCart();if(modalId===id)updModalBtn();}
+function refreshCart(){
+  document.querySelectorAll('.prop-card').forEach(c=>c.classList.toggle('in-cart',cart.includes(c.dataset.id)));
+  document.querySelectorAll('.btn-cart').forEach(b=>{const inc=cart.includes(b.dataset.id);b.innerHTML=inc?'<i class="bi bi-cart-dash me-1"></i>Quitar':'<i class="bi bi-cart-plus me-1"></i>Agregar';b.className='btn btn-sm w-100 rounded-pill btn-cart '+(inc?'btn-outline-navy':'btn-gold');});
+  const bd=document.getElementById('cartBadge');bd.textContent=cart.length;bd.style.display=cart.length?'flex':'none';
+  // cart offcanvas
+  const cl=document.getElementById('cartList'),ce=document.getElementById('cartEmpty');
+  const totalBs = cart.length * 10;
+  document.getElementById('cartTotal').textContent=cart.length;
+  document.getElementById('cartTotalBs').textContent=totalBs + ' Bs';
+  if(cart.length){ce.classList.add('d-none');cl.innerHTML=cart.map(id=>{const p=PROPS.find(x=>x.id===id);return `<div class="cart-item"><img src="${p.img}" onerror="this.src='${p.fb}'"><div class="flex-grow-1"><div class="small fw-bold">${p.nombre}</div><div class="small text-muted">Zona: ${p.meta}</div></div><button class="btn btn-sm btn-link text-danger p-0" onclick="toggleCart('${id}')"><i class="bi bi-trash"></i></button></div>`;}).join('');}
+  else{ce.classList.remove('d-none');cl.innerHTML='';}
+  // form summary
+  const fc=document.getElementById('formCartList'),fe=document.getElementById('formCartEmpty');
+  document.getElementById('formCartCount').textContent=cart.length;
+  document.getElementById('formTotal').textContent=totalBs + ' Bs';
+  if(cart.length){fe.classList.add('d-none');fc.innerHTML=cart.map(id=>{const p=PROPS.find(x=>x.id===id);return `<div class="d-flex justify-content-between align-items-center border-bottom py-1"><span class="small">${p.nombre} <span class="text-muted">(${p.precio})</span></span><button class="btn btn-sm btn-link text-danger p-0" onclick="toggleCart('${id}')"><i class="bi bi-x-lg"></i></button></div>`;}).join('');}
+  else{fe.classList.remove('d-none');fc.innerHTML='';}
+}
+function openCart(){cartOff.show();}
+function cartToForm(){cartOff.hide();document.getElementById('contacto').scrollIntoView({behavior:'smooth'});}
+
+/* ════════ SOLICITUD ════════ */
+async function submitForm(){
+  const nombre=document.getElementById('f-nombre').value.trim();
+  const cel=document.getElementById('f-celular').value.trim();
+  const correo=document.getElementById('f-correo').value.trim();
+  const mensaje=document.getElementById('f-mensaje').value.trim();
+  const err=document.getElementById('form-error'); err.classList.add('d-none');
+  
+  if(!cart.length){err.textContent='⚠️ Agrega al menos un inmueble.';err.classList.remove('d-none');return;}
+  if(!nombre||!cel||!correo){err.textContent='⚠️ Completa nombre, celular y correo.';err.classList.remove('d-none');return;}
+  if(!/\S+@\S+\.\S+/.test(correo)){err.textContent='⚠️ Correo inválido.';err.classList.remove('d-none');return;}
+  
+  const cantPago = cart.length * 10; // 10 Bs fijo
+  const solicitud = cart.join(' | '); // Envía IDs exactos: t1 | d2 | c3
+  
+  showLoad('Enviando solicitud…');
+  try{
+    const res=await callAPI({action:'submit',nombre,celular:cel.replace(/\D/g,''),correo,solicitud,cantCasas:String(cart.length),cantPago:cantPago,mensaje});
+    hideLoad();
+    if(res.success){
+      document.getElementById('success-token').textContent=res.token;
+      document.getElementById('btn-ver-estado').onclick=()=>loadStatusByToken(res.token);
+      cart=[]; refreshCart();
+      ['f-nombre','f-celular','f-correo','f-mensaje'].forEach(id=>document.getElementById(id).value='');
+      showView('v-success'); toast('✅ Solicitud enviada','success');
+    } else { err.textContent='⚠️ '+(res.error||'Error'); err.classList.remove('d-none'); }
+  }catch(e){hideLoad(); err.textContent='⚠️ '+(e.message||'Error de conexión'); err.classList.remove('d-none');}
+}
+
+/* ════════ SEGUIMIENTO ════════ */
+let _token='',_data=null;
+function lookupStatus(){const t=document.getElementById('lookup-token').value.trim();const e=document.getElementById('lookup-error');e.classList.add('d-none');if(!t){e.textContent='Ingresa tu token.';e.classList.remove('d-none');return;}loadStatusByToken(t);}
+async function loadStatusByToken(token){_token=token;showLoad('Cargando estado…');try{const res=await callAPI({action:'getStatus',token});hideLoad();if(res.success){_data=res.data;renderStatus(res.data);showView('v-estado');}else{showView('v-lookup');const e=document.getElementById('lookup-error');e.textContent='❌ '+(res.error||'Token no válido');e.classList.remove('d-none');}}catch(e){hideLoad();toast(e.message||'Error de conexión','error');showView('v-lookup');}}
+
+const STEPS=[{k:'pendiente',l:'Recibido'},{k:'confirmado',l:'Revisado'},{k:'qr_enviado',l:'QR Enviado'},{k:'comprobante_enviado',l:'Pago'},{k:'info_entregada',l:'Entregado'},{k:'completado',l:'Finalizado'}];
+const ORDER=STEPS.map(s=>s.k);
+function renderStatus(d){
+  document.getElementById('st-id').textContent=d.id;document.getElementById('st-nombre').textContent=d.nombre;document.getElementById('st-prop').textContent=d.solicitud||'';
+  const b=document.getElementById('st-badge');b.className='badge-estado s-'+d.estado;b.textContent=ESTADOS[d.estado]||d.estado;
+  document.getElementById('st-fecha').textContent='Solicitud enviada: '+(d.timestamp||'—');
+  let cur=ORDER.indexOf(d.estado);if(d.estado==='rechazado')cur=-1;
+  let h='';STEPS.forEach((s,i)=>{const cls=i<cur?'done':i===cur?'active':'next';h+=`<div class="step"><div class="step-dot ${cls}">${i<cur?'<i class="bi bi-check"></i>':(i+1)}</div><div class="step-lbl">${s.l}</div></div>`;if(i<STEPS.length-1)h+=`<div class="step-line ${i<cur?'done':''}"></div>`;});
+  document.getElementById('st-steps').innerHTML=h;
+  const box=document.getElementById('st-content');box.innerHTML='';
+  if(d.estado==='rechazado'){box.innerHTML=tpl('❌','Solicitud rechazada','Si deseas reconsiderar, contáctanos.');return;}
+  if(d.estado==='pendiente'){box.innerHTML=tpl('⏳','Solicitud en revisión','Estamos validando la disponibilidad de la información.');return;}
+  if(d.estado==='confirmado'){box.innerHTML=tpl('✅','Solicitud aprobada','Te enviaremos el QR de pago por WhatsApp. ¡Mantente atento!');return;}
+  if(d.estado==='qr_enviado'){box.innerHTML=tpl('📱','QR Enviado','Revisa tu WhatsApp para realizar el pago. Total: <strong>'+d.cantPago+' Bs</strong>');return;}
+  if(d.estado==='comprobante_enviado'){box.innerHTML=tpl('💳','Pago verificado','Estamos preparando tu información. Recibirás los datos pronto.');return;}
+  if(d.estado==='info_entregada'){box.innerHTML=tpl('📤','Información enviada','Revisa tu WhatsApp. Si tienes dudas, estamos aquí.');return;}
+  if(d.estado==='completado'){box.innerHTML=tpl('🏁','Proceso completado','¡Gracias por confiar en InfoInmuebles LaPaz! 🔍');return;}
+}
+function tpl(e,t,x){return `<div class="form-section text-center"><div style="font-size:3rem">${e}</div><h5 class="fw-bold mt-2">${t}</h5><p class="text-muted">${x}</p><button class="btn btn-outline-navy rounded-pill mt-2" onclick="showView('v-catalogo')">Volver</button></div>`;}
+
+/* ════════ ADMIN ════════ */
+let _pass='',_all=[],_md=null,_auto=null;
+function adminLogin(){const p=document.getElementById('admin-pass').value;if(!p)return;_pass=p;sessionStorage.setItem('lp_pass',p);loadAdmin();}
+function adminLogout(){_pass='';sessionStorage.removeItem('lp_pass');stopAuto();showView('v-catalogo');}
+async function loadAdmin(silent){if(!_pass){_pass=sessionStorage.getItem('lp_pass')||'';if(!_pass){showView('v-admin-login');return;}}if(!silent)showLoad('Cargando…');try{const res=await callAPI({action:'getAll',pass:_pass});if(!silent)hideLoad();if(!res.success){const e=document.getElementById('admin-login-err');e.textContent=res.error||'Error';e.classList.remove('d-none');showView('v-admin-login');stopAuto();return;}_all=res.data||[];renderStats(_all);filterTable();if(!document.getElementById('v-admin').classList.contains('active')){showView('v-admin');}startAuto();document.getElementById('admin-login-err').classList.add('d-none');}catch(e){if(!silent)hideLoad();toast(e.message||'Error de conexión','error');}}
+function startAuto(){if(_auto)return;if(!document.getElementById('autoRefresh').checked)return;_auto=setInterval(()=>{if(document.getElementById('v-admin').classList.contains('active'))loadAdmin(true);},15000);}
+function stopAuto(){if(_auto){clearInterval(_auto);_auto=null;}}
+function toggleAuto(){} // Simplificado
+function renderStats(data){const c={};data.forEach(r=>c[r.estado]=(c[r.estado]||0)+1);const s=[{l:'Total',n:data.length,col:'var(--navy)'},{l:'Pendientes',n:(c.pendiente||0)+(c.confirmado||0),col:'var(--amber)'},{l:'En proceso',n:(c.qr_enviado||0)+(c.comprobante_enviado||0),col:'#7b2d00'},{l:'Entregados',n:(c.info_entregada||0)+(c.completado||0),col:'var(--green)'},{l:'Rechazados',n:c.rechazado||0,col:'var(--red)'}];document.getElementById('admin-stats').innerHTML=s.map(x=>`<div class="col-6 col-md"><div class="stat-card text-center"><div class="stat-num" style="color:${x.col}">${x.n}</div><div class="stat-lbl">${x.l}</div></div></div>`).join('');}
+function filterTable(){const f=document.getElementById('admin-filter').value;const q=document.getElementById('admin-search').value.toLowerCase();renderTable(_all.filter(r=>(!f||r.estado===f)&&(!q||String(r.nombre).toLowerCase().includes(q)||String(r.celular).includes(q))));}
+function renderTable(data){const tb=document.getElementById('admin-tbody'),emp=document.getElementById('admin-empty');if(!data.length){tb.innerHTML='';emp.classList.remove('d-none');return;}emp.classList.add('d-none');tb.innerHTML=data.map(r=>`<tr onclick="openAdmin('${r.id}')"><td class="text-muted">${r.id}</td><td><strong>${r.nombre||''}</strong></td><td class="text-muted">${r.celular||''}</td><td class="text-muted">${r.cantCasas||'—'}</td><td>${badgeHTML(r.estado)}</td><td style="color:var(--gold);font-weight:700">${r.cantPago||'—'}</td><td class="text-muted small">${(String(r.timestamp||'').split(' ')[0])||'—'}</td><td><i class="bi bi-chevron-right" style="color:var(--gold)"></i></td></tr>`).join('');}
+function openAdmin(id){
+  try {
+    const d = _all.find(r => String(r.id) === String(id));
+    if(!d){ toast('Solicitud no encontrada', 'error'); return; }
+    _md = d;
+    
+    // Actualizar campos del modal
+    document.getElementById('amTitle').textContent = '#'+d.id+' · '+(d.nombre||'');
+    const b = document.getElementById('amBadge');
+    b.className = 'badge-estado s-'+d.estado;
+    b.textContent = ESTADOS[d.estado] || d.estado;
+    
+    document.getElementById('ai-nombre').textContent = d.nombre||'';
+    document.getElementById('ai-cel').textContent = d.celular||'';
+    document.getElementById('ai-correo').textContent = d.correo||'';
+    document.getElementById('ai-ts').textContent = d.timestamp||'';
+    document.getElementById('ai-cant').textContent = d.cantCasas||'—';
+    document.getElementById('ai-token').textContent = d.token||'';
+    document.getElementById('ai-solicitud').textContent = d.solicitud||'';
+    document.getElementById('m-monto').value = d.cantPago ? d.cantPago+' Bs' : '';
+    
+    // QR preview
+    const qrImg = document.getElementById('qr-preview-img');
+    if(d.qrUrl){ qrImg.src = d.qrUrl; qrImg.classList.remove('d-none'); }
+    else { qrImg.classList.add('d-none'); }
+    
+    // Comprobante
+    const compSection = document.getElementById('comp-section');
+    const compImg = document.getElementById('comp-img');
+    if(d.compUrl){
+      compSection.classList.remove('d-none');
+      compImg.src = d.compUrl;
+      compImg.style.display = 'block';
+      document.getElementById('comp-status').innerHTML = '✅ Comprobante recibido';
+    } else {
+      compSection.classList.add('d-none');
+      compImg.style.display = 'none';
+    }
+    
+    // Badge de estado actual
+    const ea = document.getElementById('am-estado-actual');
+    ea.className = 'badge-estado s-'+d.estado;
+    ea.textContent = ESTADOS[d.estado] || d.estado;
+    
+    // 🔧 FIX: Seleccionar el primer nav-link de forma segura
+    const firstNavLink = document.querySelector('#admin-modal .nav-tabs .nav-link');
+    amTab('info', firstNavLink);
+    
+    // 🔧 FIX: Pequeño delay para asegurar que el DOM esté listo
+    setTimeout(() => {
+      try { adminModal.show(); } 
+      catch(e){ console.error('Error mostrando modal:', e); toast('Error al abrir el panel', 'error'); }
+    }, 50);
+    
+  } catch(err){
+    console.error('Error en openAdmin:', err);
+    toast('Error al cargar la solicitud', 'error');
+  }
+}
+function amTab(t,el){document.querySelectorAll('#admin-modal .nav-link').forEach(a=>a.classList.remove('active'));el&&el.classList.add('active');['info','pago','entrega','estado'].forEach(x=>document.getElementById('amt-'+x).classList.toggle('d-none',x!==t));}
+async function adminSendConfirm(){if(!_md||!confirm('¿Confirmar solicitud y enviar QR?'))return;showLoad('Enviando…');try{const res=await callAPI({action:'sendConfirm',id:_md.id,pass:_pass});hideLoad();if(res.success){toast('✅ Confirmado','success');adminModal.hide();await loadAdmin(true);}else toast('Error: '+(res.error||''),'error');}catch(e){hideLoad();toast(e.message||'Error de conexión','error');}}
+async function adminSendQR(){const inp=document.getElementById('m-qr-inp');let qrB64='',qrMime='';
+  if(inp.files[0]){const r=await compressQR(inp.files[0]);qrB64=r.b64;qrMime=r.mime;}
+  if(!_md.qrUrl&&!qrB64){toast('Sube el QR primero','warn');return;}
+  showLoad('Enviando QR…');try{const params={action:'sendQR',id:_md.id,pass:_pass};if(qrB64){params.qrB64=qrB64;params.qrMime=qrMime;}
+  const res=await callAPI(params);hideLoad();if(res.success){toast('✅ QR enviado','success');adminModal.hide();await loadAdmin(true);}else toast('Error: '+(res.error||''),'error');}catch(e){hideLoad();toast(e.message||'Error','error');}}
+async function adminSendInfoAuto(){
+  if(!_md) return;
+  if(!confirm('¿Entregar info de '+_md.cantCasas+' inmueble(s)? El sistema enviará precio, ubicación y contacto desde la Hoja 2.')) return;
+  showLoad('Generando y enviando info…');
+  try{
+    const res=await callAPI({action:'sendInfo',id:_md.id,pass:_pass}); // Sin mensaje manual
+    hideLoad();
+    if(res.success){toast('✅ Info entregada por WhatsApp','success');adminModal.hide();await loadAdmin(true);}
+    else toast('Error: '+(res.error||''),'error');
+  }catch(e){hideLoad();toast(e.message||'Error','error');}
+}
+async function adminSetStatus(estado){if(!_md||!confirm('¿Cambiar estado a "'+estado+'"?'))return;showLoad('Actualizando…');try{const res=await callAPI({action:'setStatus',id:_md.id,pass:_pass,estado});hideLoad();if(res.success){toast('Estado actualizado','success');adminModal.hide();await loadAdmin(true);}else toast('Error: '+(res.error||''),'error');}catch(e){hideLoad();toast(e.message||'Error de conexión','error');}}
+
+/* ════════ IMÁGENES ════════ */
+function compressQR(file){return new Promise(res=>{const c=document.createElement('canvas'),img=new Image();img.onload=()=>{const m=240,r=Math.min(m/img.width,m/img.height,1),w=Math.round(img.width*r),h=Math.round(img.height*r);c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);res({b64:c.toDataURL('image/png').split(',')[1],mime:'image/png'});};img.onerror=()=>res({b64:'',mime:'image/png'});img.src=URL.createObjectURL(file);});}
+
+/* ════════ INIT + ROUTER ════════ */
+window.addEventListener('DOMContentLoaded',()=>{
+  AOS.init({once:true,duration:550,easing:'ease-out-cubic'});
+  renderGrid();
+  propModal=new bootstrap.Modal(document.getElementById('propModal'));
+  adminModal=new bootstrap.Modal(document.getElementById('admin-modal'));
+  cartOff=new bootstrap.Offcanvas(document.getElementById('cartPanel'));
+  document.getElementById('btnModalCart').addEventListener('click',()=>toggleCart(modalId));
+  const p=new URLSearchParams(location.search);
+  const tk=p.get('token');
+  if(p.has('admin')){const sp=sessionStorage.getItem('lp_pass');if(sp){_pass=sp;loadAdmin();}else showView('v-admin-login');}
+  else if(tk && tk.trim()){loadStatusByToken(tk.trim());}
+});
+</script>
+</body>
+</html>
