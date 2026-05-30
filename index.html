@@ -535,7 +535,7 @@ function refreshCart(){
   document.querySelectorAll('.btn-cart').forEach(b=>{const inc=cart.includes(b.dataset.id);b.innerHTML=inc?'<i class="bi bi-cart-dash me-1"></i>Quitar':'<i class="bi bi-cart-plus me-1"></i>Agregar';b.className='btn btn-sm w-100 rounded-pill btn-cart '+(inc?'btn-outline-navy':'btn-gold');});
   const bd=document.getElementById('cartBadge');bd.textContent=cart.length;bd.style.display=cart.length?'flex':'none';
   const cl=document.getElementById('cartList'),ce=document.getElementById('cartEmpty');
-  const totalBs=cart.length*10;
+  const totalBs=cart.length*5;
   document.getElementById('cartTotal').textContent=cart.length;
   document.getElementById('cartTotalBs').textContent=totalBs+' Bs';
   if(cart.length){ce.classList.add('d-none');cl.innerHTML=cart.map(id=>{const p=PROPS.find(x=>x.id===id);return `<div class="cart-item"><img src="${p.img}" onerror="this.src='${p.fb}'"><div class="flex-grow-1"><div class="small fw-bold">${p.nombre}</div><div class="small text-muted">Zona: ${p.meta}</div></div><button class="btn btn-sm btn-link text-danger p-0" onclick="toggleCart('${id}')"><i class="bi bi-trash"></i></button></div>`;}).join('');}
@@ -559,7 +559,7 @@ async function submitForm(){
   if(!cart.length){err.textContent='⚠️ Agrega al menos un inmueble.';err.classList.remove('d-none');return;}
   if(!nombre||!cel||!correo){err.textContent='⚠️ Completa nombre, celular y correo.';err.classList.remove('d-none');return;}
   if(!/\S+@\S+\.\S+/.test(correo)){err.textContent='⚠️ Correo inválido.';err.classList.remove('d-none');return;}
-  const cantPago=cart.length*10;
+  const cantPago=cart.length*5;
   const solicitud=cart.join(' | ');
   showLoad('Enviando solicitud…');
   try{
