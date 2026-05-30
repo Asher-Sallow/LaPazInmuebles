@@ -144,7 +144,7 @@
         <div class="carousel-caption text-start"><span class="badge-hero d-inline-block mb-3">✦ INFORMACIÓN VERIFICADA</span><h2 class="fw-bold">Accede a datos exactos<br>de inmuebles en La Paz</h2><p class="d-none d-md-block opacity-75">Precio real, ubicación exacta y contacto directo del dueño.</p><a href="#propiedades" class="btn btn-gold rounded-pill px-4 mt-2">Solicitar Info <i class="bi bi-arrow-right ms-1"></i></a></div>
       </div>
       <div class="carousel-item" style="background-image:url('https://images.unsplash.com/photo-1545324418-cc1a3fa10c00?w=1400&q=80');">
-        <div class="carousel-caption text-start"><span class="badge-hero d-inline-block mb-3">✦ DATOS REALES, SIN INTERMEDIARIOS</span><h2 class="fw-bold">Evita visitas innecesarias.<br>Infórmate primero.</h2><p class="d-none d-md-block opacity-75">Solo 10 Bs por propiedad. Pago seguro y entrega inmediata.</p><a href="#propiedades" class="btn btn-gold rounded-pill px-4 mt-2">Solicitar Info <i class="bi bi-arrow-right ms-1"></i></a></div>
+        <div class="carousel-caption text-start"><span class="badge-hero d-inline-block mb-3">✦ DATOS REALES, SIN INTERMEDIARIOS</span><h2 class="fw-bold">Evita visitas innecesarias.<br>Infórmate primero.</h2><p class="d-none d-md-block opacity-75">Solo 5 Bs por propiedad. Pago seguro y entrega inmediata.</p><a href="#propiedades" class="btn btn-gold rounded-pill px-4 mt-2">Solicitar Info <i class="bi bi-arrow-right ms-1"></i></a></div>
       </div>
       <div class="carousel-item" style="background-image:url('https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=1400&q=80');">
         <div class="carousel-caption text-start"><span class="badge-hero d-inline-block mb-3">✦ COMPRA SEGURA</span><h2 class="fw-bold">Pagas la info, la<br>recibes al instante</h2><p class="d-none d-md-block opacity-75">Validamos cada dato antes de enviártelo.</p><a href="#propiedades" class="btn btn-gold rounded-pill px-4 mt-2">Ver Catálogo <i class="bi bi-arrow-right ms-1"></i></a></div>
@@ -166,7 +166,7 @@
   <!-- CATÁLOGO -->
   <section id="propiedades" class="py-5">
     <div class="container">
-      <div class="text-center mb-4" data-aos="fade-up"><h2 class="section-title">Inmuebles Disponibles</h2><p class="text-muted mt-2">Selecciona los que te interesen. <strong>10 Bs por propiedad</strong>. Recibe precio, ubicación exacta y contacto directo.</p></div>
+      <div class="text-center mb-4" data-aos="fade-up"><h2 class="section-title">Inmuebles Disponibles</h2><p class="text-muted mt-2">Selecciona los que te interesen. <strong>5 Bs por propiedad</strong>. Recibe precio, ubicación exacta y contacto directo.</p></div>
       <div class="text-center mb-4">
         <div class="filter-bar">
           <button class="btn active" data-filter="all">Todos</button>
@@ -585,7 +585,7 @@ async function submitForm(){
   if(!nombre||!cel||!correo){err.textContent='⚠️ Completa nombre, celular y correo.';err.classList.remove('d-none');return;}
   if(!/\S+@\S+\.\S+/.test(correo)){err.textContent='⚠️ Correo inválido.';err.classList.remove('d-none');return;}
   
-  const cantPago = cart.length * 10; // 10 Bs fijo
+  const cantPago = cart.length * 5;
   const solicitud = cart.join(' | '); // Envía IDs exactos: t1 | d2 | c3
   
   showLoad('Enviando solicitud…');
