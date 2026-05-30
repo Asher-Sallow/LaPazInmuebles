@@ -60,13 +60,11 @@
     .modal-content{border:none;border-radius:20px;overflow:hidden;}
     .modal-header-img{height:240px;object-fit:cover;width:100%;}
     .modal-price{font-size:1.5rem;color:var(--gold);font-weight:700;}
-    /* CART OFFCANVAS */
     #cartPanel{width:360px;}
     .cart-item{display:flex;gap:.7rem;align-items:center;padding:.6rem 0;border-bottom:1px solid #eee;}
     .cart-item img{width:54px;height:54px;border-radius:10px;object-fit:cover;}
     .offcanvas-header{background:var(--navy);color:#fff;}
     .offcanvas-header .btn-close{filter:invert(1);}
-    /* STEPS */
     .step-bar{display:flex;align-items:flex-start;margin-bottom:26px;overflow-x:auto;padding-bottom:4px;}
     .step{display:flex;flex-direction:column;align-items:center;flex:1;min-width:54px;}
     .step-dot{width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;border:2px solid transparent;}
@@ -104,7 +102,17 @@
     #loader.show{display:flex;}
     .spinner-gold{width:42px;height:42px;border:4px solid rgba(255,255,255,.25);border-top-color:var(--gold);border-radius:50%;animation:spin .7s linear infinite;}
     @keyframes spin{to{transform:rotate(360deg);}}
-    .toast-container{z-index:9999;}
+    /* Entrega checkboxes */
+    .entrega-check-item{display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:10px;border:1.5px solid #e0e0e0;margin-bottom:8px;transition:all .2s;}
+    .entrega-check-item:has(input:checked){border-color:var(--gold);background:rgba(201,168,76,.07);}
+    .entrega-check-item input{width:18px;height:18px;accent-color:var(--gold);}
+    /* Comprobante preview */
+    .comp-preview-wrap{border:2px solid var(--gold);border-radius:12px;overflow:hidden;text-align:center;background:#fffdf6;}
+    .comp-preview-wrap img{max-height:200px;width:auto;max-width:100%;}
+    .monto-tag{display:inline-block;padding:4px 14px;border-radius:20px;font-size:.82rem;font-weight:700;}
+    .monto-ok{background:rgba(45,106,79,.12);color:var(--green);border:1px solid var(--green);}
+    .monto-diff{background:rgba(178,58,58,.12);color:var(--red);border:1px solid var(--red);}
+    .monto-unknown{background:rgba(184,134,11,.12);color:var(--amber);border:1px solid var(--amber);}
   </style>
 </head>
 <body>
@@ -112,7 +120,7 @@
 <div id="loader"><div class="spinner-gold"></div><span id="loader-msg" style="color:#fff;font-size:.9rem">Cargando…</span></div>
 <div class="toast-container position-fixed bottom-0 end-0 p-3" id="toastBox"></div>
 
-<!-- ════════ VISTA 1 — CATÁLOGO / TIENDA ════════ -->
+<!-- ════════ VISTA 1 — CATÁLOGO ════════ -->
 <div id="v-catalogo" class="view active">
   <nav class="navbar navbar-expand-lg sticky-top shadow-sm">
     <div class="container">
@@ -179,7 +187,7 @@
     </div>
   </section>
 
-  <!-- DATOS / SOLICITUD -->
+  <!-- FORMULARIO -->
   <section id="contacto" class="py-5" style="background:linear-gradient(135deg,#0a1628,#152942);">
     <div class="container">
       <div class="text-center mb-4"><h2 class="text-white section-title">Solicita tu Información</h2><p class="text-white-50">Revisa tu carrito, completa tus datos y te enviamos el QR de pago.</p></div>
@@ -342,7 +350,10 @@
 <div class="modal fade" id="admin-modal" tabindex="-1">
   <div class="modal-dialog modal-lg modal-dialog-scrollable">
     <div class="modal-content">
-      <div class="modal-header" style="background:var(--navy)"><div><h5 class="modal-title text-white fw-bold" id="amTitle"></h5><span id="amBadge" class="badge-estado"></span></div><button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button></div>
+      <div class="modal-header" style="background:var(--navy)">
+        <div><h5 class="modal-title text-white fw-bold" id="amTitle"></h5><span id="amBadge" class="badge-estado"></span></div>
+        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+      </div>
       <div class="modal-body p-0">
         <ul class="nav nav-tabs px-3 pt-2">
           <li class="nav-item"><a href="#" class="nav-link active" onclick="amTab('info',this);return false">Info</a></li>
@@ -350,6 +361,8 @@
           <li class="nav-item"><a href="#" class="nav-link" onclick="amTab('entrega',this);return false">Entregar</a></li>
           <li class="nav-item"><a href="#" class="nav-link" onclick="amTab('estado',this);return false">Estado</a></li>
         </ul>
+
+        <!-- TAB INFO -->
         <div id="amt-info" class="p-4">
           <div class="row g-3">
             <div class="col-6"><p class="small text-muted mb-0">NOMBRE</p><p id="ai-nombre" class="fw-semibold"></p></div>
@@ -360,31 +373,64 @@
             <div class="col-6"><p class="small text-muted mb-0">TOKEN</p><p id="ai-token" class="small" style="word-break:break-all;font-family:monospace"></p></div>
             <div class="col-12"><p class="small text-muted mb-0">INMUEBLES SOLICITADOS</p><p id="ai-solicitud" class="small"></p></div>
           </div>
-          <hr><button class="btn btn-outline-navy btn-sm rounded-pill" onclick="adminSendConfirm()"><i class="bi bi-check2-all me-1"></i>Confirmar solicitud y enviar QR</button>
+          <hr>
+          <button class="btn btn-outline-navy btn-sm rounded-pill" onclick="adminSendConfirm()"><i class="bi bi-check2-all me-1"></i>Confirmar solicitud y enviar QR</button>
         </div>
+
+        <!-- TAB PAGO -->
         <div id="amt-pago" class="p-4 d-none">
           <p class="text-muted small">El cliente paga vía QR. Verifica el monto recibido antes de entregar.</p>
           <div class="row g-3 mb-3">
-            <div class="col-md-6"><label class="form-label small fw-semibold">Monto total (Bs)</label><input type="text" class="form-control" id="m-monto" readonly placeholder="Calculado automáticamente"></div>
-            <div class="col-md-6"><label class="form-label small fw-semibold">QR de pago</label>
-              <div class="text-center"><img id="qr-preview-img" class="qr-img d-none"></div>
-              <input type="file" id="m-qr-inp" accept="image/*" class="d-none" onchange="previewQR(this)">
-              <button class="btn btn-sm btn-outline-secondary w-100 mt-2" onclick="document.getElementById('m-qr-inp').click()"><i class="bi bi-upload me-1"></i>Subir QR</button>
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold">Monto total (Bs)</label>
+              <input type="text" class="form-control" id="m-monto" readonly placeholder="Calculado automáticamente">
             </div>
-            <div class="col-12" id="comp-section" class="d-none">
-              <hr><p class="small fw-semibold mb-2">Comprobante del cliente:</p>
-              <img id="comp-img" style="max-height:200px;border-radius:10px;border:1px solid #eee;display:none">
-              <p id="comp-status" class="small mt-2"></p>
+            <div class="col-md-6">
+              <label class="form-label small fw-semibold">QR de pago</label>
+              <div class="text-center mb-2"><img id="qr-preview-img" class="qr-img d-none"></div>
+              <input type="file" id="m-qr-inp" accept="image/*" class="d-none" onchange="previewQR(this)">
+              <button class="btn btn-sm btn-outline-secondary w-100" onclick="document.getElementById('m-qr-inp').click()"><i class="bi bi-upload me-1"></i>Subir QR</button>
+            </div>
+            <!-- Comprobante del cliente -->
+            <div class="col-12" id="comp-section">
+              <hr>
+              <p class="small fw-semibold mb-2">📎 Comprobante del cliente:</p>
+              <div id="comp-no-img" class="text-muted small fst-italic">Sin comprobante aún.</div>
+              <div id="comp-img-wrap" class="d-none">
+                <div class="comp-preview-wrap p-2 mb-2">
+                  <img id="comp-img" style="max-height:220px;width:auto;max-width:100%;border-radius:8px;">
+                </div>
+                <div class="d-flex gap-2 align-items-center flex-wrap">
+                  <span id="comp-monto-tag" class="monto-tag monto-unknown">Monto no verificado</span>
+                  <a id="comp-drive-link" href="#" target="_blank" class="btn btn-sm btn-outline-secondary rounded-pill d-none"><i class="bi bi-box-arrow-up-right me-1"></i>Ver original</a>
+                </div>
+              </div>
             </div>
           </div>
           <button class="btn btn-navy w-100 rounded-pill" onclick="adminSendQR()"><i class="bi bi-qr-code me-2"></i>Enviar QR por WhatsApp</button>
         </div>
-          <div id="amt-entrega" class="p-4 d-none">
-            <div class="alert alert-warning small mb-3">
-              <i class="bi bi-info-circle me-1"></i>Al hacer clic, el sistema leerá los códigos solicitados, buscará <strong>Precio, Ubicación Exacta y Contacto</strong> en la Hoja 2 y enviará todo automáticamente por WhatsApp.
-            </div>
-            <button class="btn btn-gold w-100 rounded-pill" onclick="adminSendInfoAuto()"><i class="bi bi-send me-2"></i>Entregar Información Automática</button>
+
+        <!-- TAB ENTREGAR — con checkboxes para entrega parcial -->
+        <div id="amt-entrega" class="p-4 d-none">
+          <div class="alert alert-warning small mb-3">
+            <i class="bi bi-info-circle me-1"></i>
+            Selecciona los inmuebles a entregar. Puedes desmarcar los que <strong>no</strong> se deben enviar (p.ej. si solo pagó una parte). El sistema buscará Precio, Ubicación y Contacto en la Hoja 2.
           </div>
+          <p class="small fw-semibold mb-2">Inmuebles solicitados:</p>
+          <div id="amt-entrega-list" class="mb-3"></div>
+          <div class="d-flex justify-content-between align-items-center mb-3">
+            <span class="small text-muted">Seleccionados: <strong id="entrega-count">0</strong></span>
+            <div class="d-flex gap-2">
+              <button class="btn btn-sm btn-outline-secondary rounded-pill" onclick="toggleAllEntrega(true)">Todos</button>
+              <button class="btn btn-sm btn-outline-secondary rounded-pill" onclick="toggleAllEntrega(false)">Ninguno</button>
+            </div>
+          </div>
+          <button class="btn btn-gold w-100 rounded-pill" onclick="adminSendInfoAuto()">
+            <i class="bi bi-send me-2"></i>Entregar Info Seleccionada
+          </button>
+        </div>
+
+        <!-- TAB ESTADO -->
         <div id="amt-estado" class="p-4 d-none">
           <p class="text-muted small">Cambia el estado manualmente.</p>
           <div class="d-flex flex-wrap gap-2">
@@ -396,8 +442,10 @@
             <button class="btn btn-outline-secondary btn-sm rounded-pill" onclick="adminSetStatus('completado')">🏁 Completado</button>
             <button class="btn btn-outline-secondary btn-sm rounded-pill" style="color:var(--red)" onclick="adminSetStatus('rechazado')">❌ Rechazado</button>
           </div>
-          <hr><p class="small text-muted">Estado actual: <span id="am-estado-actual" class="badge-estado"></span></p>
+          <hr>
+          <p class="small text-muted">Estado actual: <span id="am-estado-actual" class="badge-estado"></span></p>
         </div>
+
       </div>
     </div>
   </div>
@@ -421,6 +469,9 @@ const PROPS=[
   {id:'c2',tipo:'casa',zona:'Achumani',nombre:'Casa Residencial',precio:'10 Bs',precioReal:10,sup:'Residencial',badge:'🏡 CASA',meta:'Achumani Central',icon:'bi-house-check',desc:'Casa familiar en zona tranquila. Servicios completos. Datos tras confirmación.',img:'https://cdn2.infocasas.com.uy/repo/img/b60d316f01d53683380cee1e0d54571d82a71fdc.jpg',fb:'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=500&q=80'},
   {id:'c3',tipo:'casa',zona:'San Ramón',nombre:'Local / Casa Comercial',precio:'10 Bs',precioReal:10,sup:'Comercial',badge:'💼 COMERCIAL',meta:'Achumani (San Ramón)',icon:'bi-cash-coin',desc:'Espacio comercial con alto flujo. Precio y dueño verificados.',img:'https://cdn2.infocasas.com.uy/repo/img/fafd8009b101fe4568de966887542ddb2ac5ee9d.jpg',fb:'https://images.unsplash.com/photo-1570129477492-45c003edd2be?w=500&q=80'}
 ];
+// Mapa rápido id→nombre para los checkboxes de entrega
+const PROP_MAP = {};
+PROPS.forEach(p => PROP_MAP[p.id] = p.nombre);
 
 /* ════════ API ════════ */
 async function callAPI(params){
@@ -443,9 +494,6 @@ function showView(id){document.querySelectorAll('.view').forEach(v=>v.classList.
 function toast(msg,type='info'){const c={success:'#2d6a4f',error:'#b23a3a',info:'#0a1628',warn:'#b8860b'};const el=document.createElement('div');el.className='toast show border-0 shadow-lg mb-2';el.style.cssText=`border-left:4px solid ${c[type]||c.info};background:#fff;min-width:240px;border-radius:10px;`;el.innerHTML=`<div class="toast-body small fw-semibold" style="color:var(--navy)">${msg}</div>`;document.getElementById('toastBox').appendChild(el);setTimeout(()=>el.remove(),4200);}
 const ESTADOS={pendiente:'⏳ Pendiente',confirmado:'✅ Confirmado',qr_enviado:'📱 QR Enviado',comprobante_enviado:'💳 Comprobante Recibido',info_entregada:'📤 Info Entregada',completado:'🏁 Completado',rechazado:'❌ Rechazado'};
 function badgeHTML(e){return `<span class="badge-estado s-${e}">${ESTADOS[e]||e}</span>`;}
-
-/* ════════ CALENDARIO ════════ */
-function gcalUrl(fechaISO,hora,titulo,lugar,detalle){return '';} // No necesario para info
 
 /* ════════ CATÁLOGO + CARRITO ════════ */
 let cart=[]; let propModal,adminModal,cartOff,modalId=null;
@@ -486,17 +534,15 @@ function refreshCart(){
   document.querySelectorAll('.prop-card').forEach(c=>c.classList.toggle('in-cart',cart.includes(c.dataset.id)));
   document.querySelectorAll('.btn-cart').forEach(b=>{const inc=cart.includes(b.dataset.id);b.innerHTML=inc?'<i class="bi bi-cart-dash me-1"></i>Quitar':'<i class="bi bi-cart-plus me-1"></i>Agregar';b.className='btn btn-sm w-100 rounded-pill btn-cart '+(inc?'btn-outline-navy':'btn-gold');});
   const bd=document.getElementById('cartBadge');bd.textContent=cart.length;bd.style.display=cart.length?'flex':'none';
-  // cart offcanvas
   const cl=document.getElementById('cartList'),ce=document.getElementById('cartEmpty');
-  const totalBs = cart.length * 10;
+  const totalBs=cart.length*10;
   document.getElementById('cartTotal').textContent=cart.length;
-  document.getElementById('cartTotalBs').textContent=totalBs + ' Bs';
+  document.getElementById('cartTotalBs').textContent=totalBs+' Bs';
   if(cart.length){ce.classList.add('d-none');cl.innerHTML=cart.map(id=>{const p=PROPS.find(x=>x.id===id);return `<div class="cart-item"><img src="${p.img}" onerror="this.src='${p.fb}'"><div class="flex-grow-1"><div class="small fw-bold">${p.nombre}</div><div class="small text-muted">Zona: ${p.meta}</div></div><button class="btn btn-sm btn-link text-danger p-0" onclick="toggleCart('${id}')"><i class="bi bi-trash"></i></button></div>`;}).join('');}
   else{ce.classList.remove('d-none');cl.innerHTML='';}
-  // form summary
   const fc=document.getElementById('formCartList'),fe=document.getElementById('formCartEmpty');
   document.getElementById('formCartCount').textContent=cart.length;
-  document.getElementById('formTotal').textContent=totalBs + ' Bs';
+  document.getElementById('formTotal').textContent=totalBs+' Bs';
   if(cart.length){fe.classList.add('d-none');fc.innerHTML=cart.map(id=>{const p=PROPS.find(x=>x.id===id);return `<div class="d-flex justify-content-between align-items-center border-bottom py-1"><span class="small">${p.nombre} <span class="text-muted">(${p.precio})</span></span><button class="btn btn-sm btn-link text-danger p-0" onclick="toggleCart('${id}')"><i class="bi bi-x-lg"></i></button></div>`;}).join('');}
   else{fe.classList.remove('d-none');fc.innerHTML='';}
 }
@@ -509,15 +555,12 @@ async function submitForm(){
   const cel=document.getElementById('f-celular').value.trim();
   const correo=document.getElementById('f-correo').value.trim();
   const mensaje=document.getElementById('f-mensaje').value.trim();
-  const err=document.getElementById('form-error'); err.classList.add('d-none');
-  
+  const err=document.getElementById('form-error');err.classList.add('d-none');
   if(!cart.length){err.textContent='⚠️ Agrega al menos un inmueble.';err.classList.remove('d-none');return;}
   if(!nombre||!cel||!correo){err.textContent='⚠️ Completa nombre, celular y correo.';err.classList.remove('d-none');return;}
   if(!/\S+@\S+\.\S+/.test(correo)){err.textContent='⚠️ Correo inválido.';err.classList.remove('d-none');return;}
-  
-  const cantPago = cart.length * 10; // 10 Bs fijo
-  const solicitud = cart.join(' | '); // Envía IDs exactos: t1 | d2 | c3
-  
+  const cantPago=cart.length*10;
+  const solicitud=cart.join(' | ');
   showLoad('Enviando solicitud…');
   try{
     const res=await callAPI({action:'submit',nombre,celular:cel.replace(/\D/g,''),correo,solicitud,cantCasas:String(cart.length),cantPago:cantPago,mensaje});
@@ -525,11 +568,11 @@ async function submitForm(){
     if(res.success){
       document.getElementById('success-token').textContent=res.token;
       document.getElementById('btn-ver-estado').onclick=()=>loadStatusByToken(res.token);
-      cart=[]; refreshCart();
+      cart=[];refreshCart();
       ['f-nombre','f-celular','f-correo','f-mensaje'].forEach(id=>document.getElementById(id).value='');
-      showView('v-success'); toast('✅ Solicitud enviada','success');
-    } else { err.textContent='⚠️ '+(res.error||'Error'); err.classList.remove('d-none'); }
-  }catch(e){hideLoad(); err.textContent='⚠️ '+(e.message||'Error de conexión'); err.classList.remove('d-none');}
+      showView('v-success');toast('✅ Solicitud enviada','success');
+    }else{err.textContent='⚠️ '+(res.error||'Error');err.classList.remove('d-none');}
+  }catch(e){hideLoad();err.textContent='⚠️ '+(e.message||'Error de conexión');err.classList.remove('d-none');}
 }
 
 /* ════════ SEGUIMIENTO ════════ */
@@ -547,110 +590,293 @@ function renderStatus(d){
   let h='';STEPS.forEach((s,i)=>{const cls=i<cur?'done':i===cur?'active':'next';h+=`<div class="step"><div class="step-dot ${cls}">${i<cur?'<i class="bi bi-check"></i>':(i+1)}</div><div class="step-lbl">${s.l}</div></div>`;if(i<STEPS.length-1)h+=`<div class="step-line ${i<cur?'done':''}"></div>`;});
   document.getElementById('st-steps').innerHTML=h;
   const box=document.getElementById('st-content');box.innerHTML='';
+
   if(d.estado==='rechazado'){box.innerHTML=tpl('❌','Solicitud rechazada','Si deseas reconsiderar, contáctanos.');return;}
-  if(d.estado==='pendiente'){box.innerHTML=tpl('⏳','Solicitud en revisión','Estamos validando la disponibilidad de la información.');return;}
-  if(d.estado==='confirmado'){box.innerHTML=tpl('✅','Solicitud aprobada','Te enviaremos el QR de pago por WhatsApp. ¡Mantente atento!');return;}
-  if(d.estado==='qr_enviado'){box.innerHTML=tpl('📱','QR Enviado','Revisa tu WhatsApp para realizar el pago. Total: <strong>'+d.cantPago+' Bs</strong>');return;}
-  if(d.estado==='comprobante_enviado'){box.innerHTML=tpl('💳','Pago verificado','Estamos preparando tu información. Recibirás los datos pronto.');return;}
-  if(d.estado==='info_entregada'){box.innerHTML=tpl('📤','Información enviada','Revisa tu WhatsApp. Si tienes dudas, estamos aquí.');return;}
+  if(d.estado==='pendiente'){box.innerHTML=tpl('⏳','Solicitud en revisión','Estamos validando la disponibilidad de la información. Te avisaremos por WhatsApp.');return;}
+  if(d.estado==='confirmado'){box.innerHTML=tpl('✅','Solicitud aprobada','Te enviaremos el QR de pago por WhatsApp pronto. ¡Mantente atento!');return;}
+
+  // ── QR ENVIADO: mostrar uploader de comprobante ──
+  if(d.estado==='qr_enviado'){
+    box.innerHTML=`
+      <div class="form-section">
+        <div class="text-center mb-3">
+          <div style="font-size:2.8rem">📱</div>
+          <h5 class="fw-bold mt-2">QR enviado — Realiza tu pago</h5>
+          <p class="text-muted small mb-0">Total a pagar: <strong style="color:var(--gold);font-size:1.1rem">${d.cantPago} Bs</strong></p>
+        </div>
+        <hr>
+        <p class="fw-semibold small mb-2"><i class="bi bi-cloud-upload me-1" style="color:var(--gold)"></i>Sube tu comprobante de pago</p>
+        <div class="upload-zone mb-2" id="comp-upload-zone" onclick="document.getElementById('comp-client-inp').click()">
+          <i class="bi bi-receipt fs-2"></i>
+          <p class="mt-2 mb-0 fw-bold">Seleccionar comprobante</p>
+          <small class="text-muted">Captura de pantalla o foto (JPG, PNG)</small>
+        </div>
+        <input type="file" id="comp-client-inp" accept="image/*" class="d-none" onchange="previewComprobante(this)">
+        <div id="comp-client-preview" class="d-none comp-preview-wrap p-2 mb-3">
+          <img id="comp-client-img" style="max-height:180px;width:auto;max-width:100%;border-radius:8px;">
+          <div class="small text-success mt-1 pb-1"><i class="bi bi-check-circle me-1"></i>Imagen lista para enviar</div>
+        </div>
+        <div id="comp-client-error" class="alert alert-danger d-none small mb-2"></div>
+        <button class="btn btn-navy w-100 rounded-pill" onclick="submitComprobante()">
+          <i class="bi bi-send me-2"></i>Enviar Comprobante al equipo
+        </button>
+        <p class="text-muted text-center mt-2 small">Lo verificaremos y te enviaremos la info en breve.</p>
+      </div>`;
+    return;
+  }
+
+  if(d.estado==='comprobante_enviado'){box.innerHTML=tpl('💳','Comprobante recibido','Nuestro equipo está verificando tu pago. Te enviaremos la información por WhatsApp muy pronto.');return;}
+  if(d.estado==='info_entregada'){box.innerHTML=tpl('📤','Información enviada','Revisa tu WhatsApp. Si tienes dudas, estamos aquí para ayudarte.');return;}
   if(d.estado==='completado'){box.innerHTML=tpl('🏁','Proceso completado','¡Gracias por confiar en InfoInmuebles LaPaz! 🔍');return;}
 }
-function tpl(e,t,x){return `<div class="form-section text-center"><div style="font-size:3rem">${e}</div><h5 class="fw-bold mt-2">${t}</h5><p class="text-muted">${x}</p><button class="btn btn-outline-navy rounded-pill mt-2" onclick="showView('v-catalogo')">Volver</button></div>`;}
+function tpl(e,t,x){return `<div class="form-section text-center"><div style="font-size:3rem">${e}</div><h5 class="fw-bold mt-2">${t}</h5><p class="text-muted">${x}</p><button class="btn btn-outline-navy rounded-pill mt-2" onclick="showView('v-catalogo')">Volver al inicio</button></div>`;}
+
+/* ════════ COMPROBANTE CLIENTE ════════ */
+
+// Preview antes de enviar
+function previewComprobante(input){
+  if(!input.files[0])return;
+  const url=URL.createObjectURL(input.files[0]);
+  document.getElementById('comp-client-img').src=url;
+  document.getElementById('comp-client-preview').classList.remove('d-none');
+  const zone=document.getElementById('comp-upload-zone');
+  if(zone) zone.innerHTML='<i class="bi bi-image fs-2" style="color:var(--green)"></i><p class="mt-2 mb-0 fw-bold text-success">'+input.files[0].name+'</p><small class="text-muted">Click para cambiar</small>';
+}
+
+// Comprimir comprobante para enviar (900px máx, JPEG 88%)
+function compressComprobante(file){
+  return new Promise(resolve=>{
+    const c=document.createElement('canvas'),img=new Image();
+    img.onload=()=>{
+      const maxW=900,r=Math.min(maxW/img.width,1);
+      c.width=Math.round(img.width*r);c.height=Math.round(img.height*r);
+      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+      resolve({b64:c.toDataURL('image/jpeg',0.88).split(',')[1],mime:'image/jpeg'});
+    };
+    img.onerror=()=>resolve({b64:'',mime:'image/jpeg'});
+    img.src=URL.createObjectURL(file);
+  });
+}
+
+// Enviar comprobante al backend
+async function submitComprobante(){
+  const inp=document.getElementById('comp-client-inp');
+  const errEl=document.getElementById('comp-client-error');
+  errEl.classList.add('d-none');
+  if(!inp||!inp.files[0]){errEl.textContent='Selecciona tu comprobante primero.';errEl.classList.remove('d-none');return;}
+  showLoad('Enviando comprobante…');
+  try{
+    const {b64,mime}=await compressComprobante(inp.files[0]);
+    const res=await callAPI({action:'receiveComp',token:_token,compB64:b64,compMime:mime});
+    hideLoad();
+    if(res.success){
+      toast('✅ Comprobante enviado. Verificaremos tu pago.','success');
+      await loadStatusByToken(_token); // Recargar estado
+    }else{
+      errEl.textContent='Error: '+(res.error||'No se pudo enviar');errEl.classList.remove('d-none');
+    }
+  }catch(e){hideLoad();errEl.textContent=e.message||'Error de conexión';errEl.classList.remove('d-none');}
+}
 
 /* ════════ ADMIN ════════ */
 let _pass='',_all=[],_md=null,_auto=null;
 function adminLogin(){const p=document.getElementById('admin-pass').value;if(!p)return;_pass=p;sessionStorage.setItem('lp_pass',p);loadAdmin();}
 function adminLogout(){_pass='';sessionStorage.removeItem('lp_pass');stopAuto();showView('v-catalogo');}
-async function loadAdmin(silent){if(!_pass){_pass=sessionStorage.getItem('lp_pass')||'';if(!_pass){showView('v-admin-login');return;}}if(!silent)showLoad('Cargando…');try{const res=await callAPI({action:'getAll',pass:_pass});if(!silent)hideLoad();if(!res.success){const e=document.getElementById('admin-login-err');e.textContent=res.error||'Error';e.classList.remove('d-none');showView('v-admin-login');stopAuto();return;}_all=res.data||[];renderStats(_all);filterTable();if(!document.getElementById('v-admin').classList.contains('active')){showView('v-admin');}startAuto();document.getElementById('admin-login-err').classList.add('d-none');}catch(e){if(!silent)hideLoad();toast(e.message||'Error de conexión','error');}}
-function startAuto(){if(_auto)return;if(!document.getElementById('autoRefresh').checked)return;_auto=setInterval(()=>{if(document.getElementById('v-admin').classList.contains('active'))loadAdmin(true);},15000);}
+async function loadAdmin(silent){
+  if(!_pass){_pass=sessionStorage.getItem('lp_pass')||'';if(!_pass){showView('v-admin-login');return;}}
+  if(!silent)showLoad('Cargando…');
+  try{
+    const res=await callAPI({action:'getAll',pass:_pass});
+    if(!silent)hideLoad();
+    if(!res.success){const e=document.getElementById('admin-login-err');e.textContent=res.error||'Error';e.classList.remove('d-none');showView('v-admin-login');stopAuto();return;}
+    _all=res.data||[];renderStats(_all);filterTable();
+    if(!document.getElementById('v-admin').classList.contains('active'))showView('v-admin');
+    startAuto();document.getElementById('admin-login-err').classList.add('d-none');
+  }catch(e){if(!silent)hideLoad();toast(e.message||'Error de conexión','error');}
+}
+function startAuto(){if(_auto)return;_auto=setInterval(()=>{if(document.getElementById('v-admin').classList.contains('active'))loadAdmin(true);},15000);}
 function stopAuto(){if(_auto){clearInterval(_auto);_auto=null;}}
-function toggleAuto(){} // Simplificado
 function renderStats(data){const c={};data.forEach(r=>c[r.estado]=(c[r.estado]||0)+1);const s=[{l:'Total',n:data.length,col:'var(--navy)'},{l:'Pendientes',n:(c.pendiente||0)+(c.confirmado||0),col:'var(--amber)'},{l:'En proceso',n:(c.qr_enviado||0)+(c.comprobante_enviado||0),col:'#7b2d00'},{l:'Entregados',n:(c.info_entregada||0)+(c.completado||0),col:'var(--green)'},{l:'Rechazados',n:c.rechazado||0,col:'var(--red)'}];document.getElementById('admin-stats').innerHTML=s.map(x=>`<div class="col-6 col-md"><div class="stat-card text-center"><div class="stat-num" style="color:${x.col}">${x.n}</div><div class="stat-lbl">${x.l}</div></div></div>`).join('');}
 function filterTable(){const f=document.getElementById('admin-filter').value;const q=document.getElementById('admin-search').value.toLowerCase();renderTable(_all.filter(r=>(!f||r.estado===f)&&(!q||String(r.nombre).toLowerCase().includes(q)||String(r.celular).includes(q))));}
-function renderTable(data){const tb=document.getElementById('admin-tbody'),emp=document.getElementById('admin-empty');if(!data.length){tb.innerHTML='';emp.classList.remove('d-none');return;}emp.classList.add('d-none');tb.innerHTML=data.map(r=>`<tr onclick="openAdmin('${r.id}')"><td class="text-muted">${r.id}</td><td><strong>${r.nombre||''}</strong></td><td class="text-muted">${r.celular||''}</td><td class="text-muted">${r.cantCasas||'—'}</td><td>${badgeHTML(r.estado)}</td><td style="color:var(--gold);font-weight:700">${r.cantPago||'—'}</td><td class="text-muted small">${(String(r.timestamp||'').split(' ')[0])||'—'}</td><td><i class="bi bi-chevron-right" style="color:var(--gold)"></i></td></tr>`).join('');}
-function openAdmin(id){
-  try {
-    const d = _all.find(r => String(r.id) === String(id));
-    if(!d){ toast('Solicitud no encontrada', 'error'); return; }
-    _md = d;
-    
-    // Actualizar campos del modal
-    document.getElementById('amTitle').textContent = '#'+d.id+' · '+(d.nombre||'');
-    const b = document.getElementById('amBadge');
-    b.className = 'badge-estado s-'+d.estado;
-    b.textContent = ESTADOS[d.estado] || d.estado;
-    
-    document.getElementById('ai-nombre').textContent = d.nombre||'';
-    document.getElementById('ai-cel').textContent = d.celular||'';
-    document.getElementById('ai-correo').textContent = d.correo||'';
-    document.getElementById('ai-ts').textContent = d.timestamp||'';
-    document.getElementById('ai-cant').textContent = d.cantCasas||'—';
-    document.getElementById('ai-token').textContent = d.token||'';
-    document.getElementById('ai-solicitud').textContent = d.solicitud||'';
-    document.getElementById('m-monto').value = d.cantPago ? d.cantPago+' Bs' : '';
-    
-    // QR preview
-    const qrImg = document.getElementById('qr-preview-img');
-    if(d.qrUrl){ qrImg.src = d.qrUrl; qrImg.classList.remove('d-none'); }
-    else { qrImg.classList.add('d-none'); }
-    
-    // Comprobante
-    const compSection = document.getElementById('comp-section');
-    const compImg = document.getElementById('comp-img');
-    if(d.compUrl){
-      compSection.classList.remove('d-none');
-      compImg.src = d.compUrl;
-      compImg.style.display = 'block';
-      document.getElementById('comp-status').innerHTML = '✅ Comprobante recibido';
-    } else {
-      compSection.classList.add('d-none');
-      compImg.style.display = 'none';
-    }
-    
-    // Badge de estado actual
-    const ea = document.getElementById('am-estado-actual');
-    ea.className = 'badge-estado s-'+d.estado;
-    ea.textContent = ESTADOS[d.estado] || d.estado;
-    
-    // 🔧 FIX: Seleccionar el primer nav-link de forma segura
-    const firstNavLink = document.querySelector('#admin-modal .nav-tabs .nav-link');
-    amTab('info', firstNavLink);
-    
-    // 🔧 FIX: Pequeño delay para asegurar que el DOM esté listo
-    setTimeout(() => {
-      try { adminModal.show(); } 
-      catch(e){ console.error('Error mostrando modal:', e); toast('Error al abrir el panel', 'error'); }
-    }, 50);
-    
-  } catch(err){
-    console.error('Error en openAdmin:', err);
-    toast('Error al cargar la solicitud', 'error');
-  }
+function renderTable(data){
+  const tb=document.getElementById('admin-tbody'),emp=document.getElementById('admin-empty');
+  if(!data.length){tb.innerHTML='';emp.classList.remove('d-none');return;}
+  emp.classList.add('d-none');
+  // Marcar con 💳 si tiene comprobante pendiente de revisar
+  tb.innerHTML=data.map(r=>`<tr onclick="openAdmin('${r.id}')">
+    <td class="text-muted">${r.id}</td>
+    <td><strong>${r.nombre||''}</strong> ${r.compUrl?'<span class="badge bg-warning text-dark ms-1" style="font-size:.65rem">💳 Comp.</span>':''}</td>
+    <td class="text-muted">${r.celular||''}</td>
+    <td class="text-muted">${r.cantCasas||'—'}</td>
+    <td>${badgeHTML(r.estado)}</td>
+    <td style="color:var(--gold);font-weight:700">${r.cantPago||'—'}</td>
+    <td class="text-muted small">${(String(r.timestamp||'').split(' ')[0])||'—'}</td>
+    <td><i class="bi bi-chevron-right" style="color:var(--gold)"></i></td>
+  </tr>`).join('');
 }
+
+function openAdmin(id){
+  try{
+    const d=_all.find(r=>String(r.id)===String(id));
+    if(!d){toast('Solicitud no encontrada','error');return;}
+    _md=d;
+    document.getElementById('amTitle').textContent='#'+d.id+' · '+(d.nombre||'');
+    const b=document.getElementById('amBadge');b.className='badge-estado s-'+d.estado;b.textContent=ESTADOS[d.estado]||d.estado;
+    document.getElementById('ai-nombre').textContent=d.nombre||'';
+    document.getElementById('ai-cel').textContent=d.celular||'';
+    document.getElementById('ai-correo').textContent=d.correo||'';
+    document.getElementById('ai-ts').textContent=d.timestamp||'';
+    document.getElementById('ai-cant').textContent=d.cantCasas||'—';
+    document.getElementById('ai-token').textContent=d.token||'';
+    document.getElementById('ai-solicitud').textContent=d.solicitud||'';
+    document.getElementById('m-monto').value=d.cantPago?d.cantPago+' Bs':'';
+
+    // QR preview
+    const qrImg=document.getElementById('qr-preview-img');
+    if(d.qrUrl){qrImg.src=d.qrUrl;qrImg.classList.remove('d-none');}
+    else qrImg.classList.add('d-none');
+
+    // Comprobante del cliente en tab Pago
+    const compWrap=document.getElementById('comp-img-wrap');
+    const compNoImg=document.getElementById('comp-no-img');
+    if(d.compUrl){
+      compWrap.classList.remove('d-none');compNoImg.classList.add('d-none');
+      document.getElementById('comp-img').src=d.compUrl;
+      // Mostrar tag de monto si viene del OCR
+      const tag=document.getElementById('comp-monto-tag');
+      if(d.montoDetectado!=null){
+        const esperado=Number(String(d.cantPago||0).replace(/[^0-9.]/g,''));
+        const detectado=Number(d.montoDetectado);
+        const ok=Math.abs(detectado-esperado)<1;
+        tag.className='monto-tag '+(ok?'monto-ok':'monto-diff');
+        tag.textContent=(ok?'✅':'⚠️')+' Detectado: '+detectado+' Bs '+(ok?'(Correcto)':'(Esperado: '+esperado+' Bs)');
+      }else{
+        tag.className='monto-tag monto-unknown';tag.textContent='Verificar monto manualmente';
+      }
+      const driveLink=document.getElementById('comp-drive-link');
+      driveLink.href=d.compUrl;driveLink.classList.remove('d-none');
+    }else{
+      compWrap.classList.add('d-none');compNoImg.classList.remove('d-none');
+      document.getElementById('comp-drive-link').classList.add('d-none');
+    }
+
+    // Checkboxes de entrega parcial
+    const codigos=String(d.solicitud||'').split('|').map(c=>c.trim()).filter(c=>c);
+    const listEl=document.getElementById('amt-entrega-list');
+    if(codigos.length){
+      listEl.innerHTML=codigos.map(code=>`
+        <div class="entrega-check-item">
+          <input type="checkbox" class="entrega-chk" value="${code}" id="chk-${code}" checked onchange="updateEntregaCount()">
+          <label for="chk-${code}" class="flex-grow-1 small mb-0" style="cursor:pointer">
+            <strong>${code}</strong> — ${PROP_MAP[code]||code}
+          </label>
+        </div>`).join('');
+    }else{
+      listEl.innerHTML='<p class="text-muted small">Sin inmuebles en solicitud.</p>';
+    }
+    updateEntregaCount();
+
+    // Badge estado actual
+    const ea=document.getElementById('am-estado-actual');ea.className='badge-estado s-'+d.estado;ea.textContent=ESTADOS[d.estado]||d.estado;
+
+    const firstTab=document.querySelector('#admin-modal .nav-tabs .nav-link');
+    amTab('info',firstTab);
+    setTimeout(()=>{try{adminModal.show();}catch(e){console.error(e);toast('Error al abrir panel','error');}},50);
+  }catch(err){console.error(err);toast('Error al cargar la solicitud','error');}
+}
+
 function amTab(t,el){document.querySelectorAll('#admin-modal .nav-link').forEach(a=>a.classList.remove('active'));el&&el.classList.add('active');['info','pago','entrega','estado'].forEach(x=>document.getElementById('amt-'+x).classList.toggle('d-none',x!==t));}
-async function adminSendConfirm(){if(!_md||!confirm('¿Confirmar solicitud y enviar QR?'))return;showLoad('Enviando…');try{const res=await callAPI({action:'sendConfirm',id:_md.id,pass:_pass});hideLoad();if(res.success){toast('✅ Confirmado','success');adminModal.hide();await loadAdmin(true);}else toast('Error: '+(res.error||''),'error');}catch(e){hideLoad();toast(e.message||'Error de conexión','error');}}
-async function adminSendQR(){const inp=document.getElementById('m-qr-inp');let qrB64='',qrMime='';
+
+// Actualizar contador de seleccionados en entrega
+function updateEntregaCount(){
+  const total=document.querySelectorAll('.entrega-chk:checked').length;
+  const el=document.getElementById('entrega-count');if(el)el.textContent=total;
+}
+function toggleAllEntrega(check){document.querySelectorAll('.entrega-chk').forEach(c=>c.checked=check);updateEntregaCount();}
+
+async function adminSendConfirm(){
+  if(!_md||!confirm('¿Confirmar solicitud y avisar al cliente?'))return;
+  showLoad('Enviando…');
+  try{const res=await callAPI({action:'sendConfirm',id:_md.id,pass:_pass});hideLoad();if(res.success){toast('✅ Confirmado','success');adminModal.hide();await loadAdmin(true);}else toast('Error: '+(res.error||''),'error');}
+  catch(e){hideLoad();toast(e.message||'Error','error');}
+}
+
+/* ────────── QR SIN COMPRESIÓN DESTRUCTIVA ────────── */
+// FIX: antes era canvas de 240px, que hacía el QR ilegible.
+// Ahora: si el archivo es ≤2MB se envía directo (sin reescalar),
+// si es mayor se limita a 1200px manteniendo calidad PNG.
+function compressQR(file){
+  return new Promise(resolve=>{
+    if(file.size<=2*1024*1024){
+      // Archivo pequeño → base64 sin modificar
+      const reader=new FileReader();
+      reader.onload=()=>resolve({b64:reader.result.split(',')[1],mime:file.type||'image/png'});
+      reader.onerror=()=>resolve({b64:'',mime:'image/png'});
+      reader.readAsDataURL(file);
+      return;
+    }
+    // Archivo grande → reescalar a 1200px (sigue siendo escaneable)
+    const c=document.createElement('canvas'),img=new Image();
+    img.onload=()=>{
+      const maxPx=1200,r=Math.min(maxPx/img.width,maxPx/img.height,1);
+      c.width=Math.round(img.width*r);c.height=Math.round(img.height*r);
+      c.getContext('2d').drawImage(img,0,0,c.width,c.height);
+      resolve({b64:c.toDataURL('image/png').split(',')[1],mime:'image/png'});
+    };
+    img.onerror=()=>resolve({b64:'',mime:'image/png'});
+    img.src=URL.createObjectURL(file);
+  });
+}
+
+// FIX: previewQR estaba referenciada en el HTML pero no definida
+function previewQR(input){
+  if(!input.files[0])return;
+  const url=URL.createObjectURL(input.files[0]);
+  const img=document.getElementById('qr-preview-img');
+  img.src=url;img.classList.remove('d-none');
+}
+
+async function adminSendQR(){
+  const inp=document.getElementById('m-qr-inp');let qrB64='',qrMime='';
   if(inp.files[0]){const r=await compressQR(inp.files[0]);qrB64=r.b64;qrMime=r.mime;}
   if(!_md.qrUrl&&!qrB64){toast('Sube el QR primero','warn');return;}
-  showLoad('Enviando QR…');try{const params={action:'sendQR',id:_md.id,pass:_pass};if(qrB64){params.qrB64=qrB64;params.qrMime=qrMime;}
-  const res=await callAPI(params);hideLoad();if(res.success){toast('✅ QR enviado','success');adminModal.hide();await loadAdmin(true);}else toast('Error: '+(res.error||''),'error');}catch(e){hideLoad();toast(e.message||'Error','error');}}
-async function adminSendInfoAuto(){
-  if(!_md) return;
-  if(!confirm('¿Entregar info de '+_md.cantCasas+' inmueble(s)? El sistema enviará precio, ubicación y contacto desde la Hoja 2.')) return;
-  showLoad('Generando y enviando info…');
+  showLoad('Enviando QR…');
   try{
-    const res=await callAPI({action:'sendInfo',id:_md.id,pass:_pass}); // Sin mensaje manual
-    hideLoad();
-    if(res.success){toast('✅ Info entregada por WhatsApp','success');adminModal.hide();await loadAdmin(true);}
+    const params={action:'sendQR',id:_md.id,pass:_pass};
+    if(qrB64){params.qrB64=qrB64;params.qrMime=qrMime;}
+    const res=await callAPI(params);hideLoad();
+    if(res.success){toast('✅ QR enviado','success');adminModal.hide();await loadAdmin(true);}
     else toast('Error: '+(res.error||''),'error');
   }catch(e){hideLoad();toast(e.message||'Error','error');}
 }
-async function adminSetStatus(estado){if(!_md||!confirm('¿Cambiar estado a "'+estado+'"?'))return;showLoad('Actualizando…');try{const res=await callAPI({action:'setStatus',id:_md.id,pass:_pass,estado});hideLoad();if(res.success){toast('Estado actualizado','success');adminModal.hide();await loadAdmin(true);}else toast('Error: '+(res.error||''),'error');}catch(e){hideLoad();toast(e.message||'Error de conexión','error');}}
 
-/* ════════ IMÁGENES ════════ */
-function compressQR(file){return new Promise(res=>{const c=document.createElement('canvas'),img=new Image();img.onload=()=>{const m=240,r=Math.min(m/img.width,m/img.height,1),w=Math.round(img.width*r),h=Math.round(img.height*r);c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);res({b64:c.toDataURL('image/png').split(',')[1],mime:'image/png'});};img.onerror=()=>res({b64:'',mime:'image/png'});img.src=URL.createObjectURL(file);});}
+/* ────────── ENTREGA PARCIAL ────────── */
+async function adminSendInfoAuto(){
+  if(!_md)return;
+  const checks=document.querySelectorAll('.entrega-chk:checked');
+  const seleccionados=Array.from(checks).map(c=>c.value);
+  if(!seleccionados.length){toast('Selecciona al menos un inmueble','warn');return;}
+  const esperado=Number(String(_md.cantCasas||0));
+  let confirmMsg=`¿Entregar info de ${seleccionados.length} inmueble(s): ${seleccionados.join(', ')}?`;
+  if(seleccionados.length<esperado) confirmMsg+=`\n\n⚠️ El cliente pidió ${esperado} pero solo se enviarán ${seleccionados.length}.`;
+  if(!confirm(confirmMsg))return;
+  showLoad('Generando y enviando info…');
+  try{
+    const res=await callAPI({action:'sendInfo',id:_md.id,pass:_pass,codigosAEnviar:seleccionados});
+    hideLoad();
+    if(res.success){toast(`✅ Info de ${res.cantEnviada||seleccionados.length} inmueble(s) enviada`,'success');adminModal.hide();await loadAdmin(true);}
+    else toast('Error: '+(res.error||''),'error');
+  }catch(e){hideLoad();toast(e.message||'Error','error');}
+}
 
-/* ════════ INIT + ROUTER ════════ */
+async function adminSetStatus(estado){
+  if(!_md||!confirm('¿Cambiar estado a "'+estado+'"?'))return;
+  showLoad('Actualizando…');
+  try{const res=await callAPI({action:'setStatus',id:_md.id,pass:_pass,estado});hideLoad();if(res.success){toast('Estado actualizado','success');adminModal.hide();await loadAdmin(true);}else toast('Error: '+(res.error||''),'error');}
+  catch(e){hideLoad();toast(e.message||'Error de conexión','error');}
+}
+
+/* ════════ INIT ════════ */
 window.addEventListener('DOMContentLoaded',()=>{
   AOS.init({once:true,duration:550,easing:'ease-out-cubic'});
   renderGrid();
@@ -661,7 +887,7 @@ window.addEventListener('DOMContentLoaded',()=>{
   const p=new URLSearchParams(location.search);
   const tk=p.get('token');
   if(p.has('admin')){const sp=sessionStorage.getItem('lp_pass');if(sp){_pass=sp;loadAdmin();}else showView('v-admin-login');}
-  else if(tk && tk.trim()){loadStatusByToken(tk.trim());}
+  else if(tk&&tk.trim())loadStatusByToken(tk.trim());
 });
 </script>
 </body>
